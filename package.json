@@ -1,0 +1,49 @@
+{
+  "name": "stock-analyst-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "npm run production",
+    "production": "npm run build && npm run preview",
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "preview": "vite preview",
+    "serve": "vite preview",
+    "test": "vitest",
+    "lint": "eslint . --ext .vue,.js,.ts --fix",
+    "format": "prettier --write src/",
+    "clean": "rm -rf dist node_modules package-lock.json",
+    "setup": "npm install"
+  },
+  "dependencies": {
+    "@tailwindcss/typography": "^0.5.16",
+    "axios": "^1.11.0",
+    "chart.js": "^4.5.0",
+    "marked": "^16.1.1",
+    "pinia": "^3.0.3",
+    "vue": "^3.5.17",
+    "vue-chartjs": "^5.3.2",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vue/tsconfig": "^0.7.0",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "~5.8.3",
+    "vite": "^7.0.4",
+    "vue-tsc": "^2.2.12",
+    "vitest": "^1.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint-plugin-vue": "^9.0.0",
+    "prettier": "^3.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}
