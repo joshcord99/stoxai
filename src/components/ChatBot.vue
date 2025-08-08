@@ -39,10 +39,8 @@ const sendMessage = async () => {
   isLoading.value = true
 
   try {
-    // Connect to your backend
-    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5003';
-    
-    const { data } = await axios.post(`${BACKEND_URL}/api/user-chatbot`, {
+    // Use Netlify function for chatbot
+    const { data } = await axios.post('/.netlify/functions/api/ai_chatbot', {
       question: userQuestion
     }, {
       headers: { Authorization: `Bearer ${userStore.token}` }
