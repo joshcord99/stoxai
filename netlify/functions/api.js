@@ -69,8 +69,8 @@ async function initializeDatabase() {
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         password_hash VARCHAR(255) NOT NULL,
-        first_name VARCHAR(100),
-        last_name VARCHAR(100),
+        first_name VARCHAR(100) DEFAULT NULL,
+        last_name VARCHAR(100) DEFAULT NULL,
         watchlist TEXT[],
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -85,6 +85,16 @@ async function initializeDatabase() {
       console.log("=== DEBUG: Watchlist column migration completed ===");
     } catch (migrationError) {
       console.log("=== DEBUG: Watchlist column already exists or migration failed ===", migrationError.message);
+    }
+    
+    // Update first_name and last_name columns to allow NULL (migration)
+    console.log("=== DEBUG: Updating name columns to allow NULL ===");
+    try {
+      await sql`ALTER TABLE users ALTER COLUMN first_name DROP NOT NULL`;
+      await sql`ALTER TABLE users ALTER COLUMN last_name DROP NOT NULL`;
+      console.log("=== DEBUG: Name columns updated to allow NULL ===");
+    } catch (migrationError) {
+      console.log("=== DEBUG: Name columns already allow NULL or migration failed ===", migrationError.message);
     }
   } catch (error) {
     console.error("=== DEBUG: Database initialization error ===", error);
@@ -153,7 +163,9 @@ exports.handler = async (event, context) => {
 
     // Authentication routes
     if (path === "/auth/register" && method === "POST") {
+      console.log("=== DEBUG: Registration request body ===", body);
       const { email, password, firstName, lastName } = body;
+      console.log("=== DEBUG: Extracted fields ===", { email, password, firstName, lastName });
 
       if (!email || !password) {
         return {
