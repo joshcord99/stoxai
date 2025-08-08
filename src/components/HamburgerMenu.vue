@@ -97,12 +97,12 @@ onUnmounted(() => {
         <div class="flex items-center space-x-3">
           <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
             <span class="text-white font-semibold text-sm">
-              {{ (user.displayName || user.fullName || 'U').charAt(0).toUpperCase() }}
+              {{ (user.user?.first_name || 'U').charAt(0).toUpperCase() }}
             </span>
           </div>
           <div class="flex-1 min-w-0">
             <p class="text-sm font-medium text-gray-900 truncate">
-              {{ user.displayName || user.fullName || 'User' }}
+              {{ (user.user?.first_name || '') + ' ' + (user.user?.last_name || '') || 'User' }}
             </p>
             <p class="text-xs text-gray-500 truncate">
               {{ user.user?.email }}

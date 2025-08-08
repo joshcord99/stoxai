@@ -2,33 +2,14 @@ const { neon } = require("@neondatabase/serverless");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-// Debug environment variables
-console.log("=== DEBUG: Environment Variables ===");
-console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
-console.log("JWT_SECRET_KEY exists:", !!process.env.JWT_SECRET_KEY);
-console.log("OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
-console.log(
-  "DATABASE_URL length:",
-  process.env.DATABASE_URL ? process.env.DATABASE_URL.length : 0
-);
-console.log(
-  "DATABASE_URL starts with:",
-  process.env.DATABASE_URL
-    ? process.env.DATABASE_URL.substring(0, 20) + "..."
-    : "undefined"
-);
+
 
 // Initialize database connection
 let sql;
 try {
-  console.log("=== DEBUG: Initializing database connection ===");
   const databaseUrl = process.env.DATABASE_URL;
-  console.log("=== DEBUG: Using explicit DATABASE_URL ===");
-  console.log("=== DEBUG: Full DATABASE_URL ===", databaseUrl);
   sql = neon(databaseUrl);
-  console.log("Database connection initialized successfully");
 } catch (error) {
-  console.error("=== DEBUG: Database connection error ===", error);
   throw error;
 }
 
@@ -63,7 +44,6 @@ async function comparePassword(password, hashedPassword) {
 // Initialize database tables
 async function initializeDatabase() {
   try {
-    console.log("=== DEBUG: Creating users table ===");
     await sql`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -76,34 +56,22 @@ async function initializeDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
-    console.log("=== DEBUG: Users table created/verified successfully ===");
-
+    
     // Add watchlist column if it doesn't exist (migration)
-    console.log("=== DEBUG: Checking for watchlist column ===");
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS watchlist TEXT[]`;
-      console.log("=== DEBUG: Watchlist column migration completed ===");
     } catch (migrationError) {
-      console.log(
-        "=== DEBUG: Watchlist column already exists or migration failed ===",
-        migrationError.message
-      );
+      // Column already exists
     }
-
+    
     // Update first_name and last_name columns to allow NULL (migration)
-    console.log("=== DEBUG: Updating name columns to allow NULL ===");
     try {
       await sql`ALTER TABLE users ALTER COLUMN first_name DROP NOT NULL`;
       await sql`ALTER TABLE users ALTER COLUMN last_name DROP NOT NULL`;
-      console.log("=== DEBUG: Name columns updated to allow NULL ===");
     } catch (migrationError) {
-      console.log(
-        "=== DEBUG: Name columns already allow NULL or migration failed ===",
-        migrationError.message
-      );
+      // Columns already allow NULL
     }
   } catch (error) {
-    console.error("=== DEBUG: Database initialization error ===", error);
     throw error;
   }
 }
@@ -128,14 +96,8 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    console.log("=== DEBUG: Starting request handler ===");
-    console.log("Request path:", event.path);
-    console.log("Request method:", event.httpMethod);
-
     // Initialize database
-    console.log("=== DEBUG: Calling initializeDatabase ===");
     await initializeDatabase();
-    console.log("=== DEBUG: Database initialization completed ===");
 
     const path = event.path.replace("/.netlify/functions/api", "");
     const method = event.httpMethod;
@@ -150,13 +112,7 @@ exports.handler = async (event, context) => {
       }
     }
 
-    // Route handling
-    console.log("=== DEBUG: Route handling ===");
-    console.log("Path:", path);
-    console.log("Method:", method);
-
     if (path === "/health" && method === "GET") {
-      console.log("=== DEBUG: Health check endpoint called ===");
       return {
         statusCode: 200,
         headers,
@@ -169,14 +125,7 @@ exports.handler = async (event, context) => {
 
     // Authentication routes
     if (path === "/auth/register" && method === "POST") {
-      console.log("=== DEBUG: Registration request body ===", body);
       const { email, password, firstName, lastName } = body;
-      console.log("=== DEBUG: Extracted fields ===", {
-        email,
-        password,
-        firstName,
-        lastName,
-      });
 
       if (!email || !password) {
         return {

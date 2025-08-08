@@ -10,14 +10,7 @@ import { onMounted } from 'vue'
 
 const user = useUserStore()
 
-onMounted(() => {
-  console.log('=== DEBUG: Dashboard mounted ===', {
-    user: user.user,
-    fullName: user.fullName,
-    displayName: user.displayName,
-    isAuthenticated: user.isAuthenticated
-  })
-})
+
 </script>
 
 <template>
@@ -27,9 +20,11 @@ onMounted(() => {
     </div>
 
     <div class="flex justify-between items-center p-6 pb-0 pt-2 mt-8">
-      <h1 class="font-bold text-white" style="font-size: 50px;">
-        Welcome, {{ user.displayName || user.fullName || 'Human' }}
-      </h1>
+      <div>
+        <h1 class="font-bold text-white" style="font-size: 50px;">
+          Welcome, {{ user.user?.first_name || 'Human' }}
+        </h1>
+      </div>
       
       <HamburgerMenu />
     </div>
