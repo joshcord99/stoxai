@@ -77,16 +77,19 @@ async function initializeDatabase() {
       )
     `;
     console.log("=== DEBUG: Users table created/verified successfully ===");
-    
+
     // Add watchlist column if it doesn't exist (migration)
     console.log("=== DEBUG: Checking for watchlist column ===");
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS watchlist TEXT[]`;
       console.log("=== DEBUG: Watchlist column migration completed ===");
     } catch (migrationError) {
-      console.log("=== DEBUG: Watchlist column already exists or migration failed ===", migrationError.message);
+      console.log(
+        "=== DEBUG: Watchlist column already exists or migration failed ===",
+        migrationError.message
+      );
     }
-    
+
     // Update first_name and last_name columns to allow NULL (migration)
     console.log("=== DEBUG: Updating name columns to allow NULL ===");
     try {
@@ -94,7 +97,10 @@ async function initializeDatabase() {
       await sql`ALTER TABLE users ALTER COLUMN last_name DROP NOT NULL`;
       console.log("=== DEBUG: Name columns updated to allow NULL ===");
     } catch (migrationError) {
-      console.log("=== DEBUG: Name columns already allow NULL or migration failed ===", migrationError.message);
+      console.log(
+        "=== DEBUG: Name columns already allow NULL or migration failed ===",
+        migrationError.message
+      );
     }
   } catch (error) {
     console.error("=== DEBUG: Database initialization error ===", error);
@@ -165,7 +171,12 @@ exports.handler = async (event, context) => {
     if (path === "/auth/register" && method === "POST") {
       console.log("=== DEBUG: Registration request body ===", body);
       const { email, password, firstName, lastName } = body;
-      console.log("=== DEBUG: Extracted fields ===", { email, password, firstName, lastName });
+      console.log("=== DEBUG: Extracted fields ===", {
+        email,
+        password,
+        firstName,
+        lastName,
+      });
 
       if (!email || !password) {
         return {
@@ -242,7 +253,7 @@ exports.handler = async (event, context) => {
 
       try {
         const result = await sql`
-          SELECT id, email, password_hash, first_name, last_name, watchlist
+          SELECT id, email, password_hash, first_name, last_name, watchlist, created_at
           FROM users WHERE email = ${email}
         `;
 

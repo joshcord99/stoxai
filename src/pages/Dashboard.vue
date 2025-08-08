@@ -6,8 +6,18 @@ import MarketHeadlines from '../components/MarketHeadlines.vue'
 import PortfolioCard from '../components/PortfolioCard.vue'
 import HamburgerMenu from '../components/HamburgerMenu.vue'
 import Toast from '../tools/Toast.vue'
+import { onMounted } from 'vue'
 
 const user = useUserStore()
+
+onMounted(() => {
+  console.log('=== DEBUG: Dashboard mounted ===', {
+    user: user.user,
+    fullName: user.fullName,
+    displayName: user.displayName,
+    isAuthenticated: user.isAuthenticated
+  })
+})
 </script>
 
 <template>
