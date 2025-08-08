@@ -9,7 +9,7 @@ const getCurrencyLayerApiKey = (): string | undefined => {
   return undefined;
 };
 
-const BASE_URL = "http://api.currencylayer.com";
+const BASE_URL = "https://api.currencylayer.com";
 
 interface ForexRate {
   symbol: string;

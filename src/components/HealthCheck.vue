@@ -33,7 +33,7 @@ const statusText = ref('Checking connection...');
 const error = ref('');
 const checking = ref(false);
 
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5003";
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || "";
 
 const checkHealth = async () => {
   checking.value = true;
@@ -42,7 +42,7 @@ const checkHealth = async () => {
   error.value = '';
 
   try {
-    const response = await axios.get(`${BACKEND_URL}/api/health`, {
+    const response = await axios.get(`${BACKEND_URL ? `${BACKEND_URL}/api/health` : '/.netlify/functions/api/health'}`, {
       timeout: 5000
     });
     
