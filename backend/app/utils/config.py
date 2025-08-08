@@ -23,4 +23,12 @@ class Config:
     
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key'
     
-    CORS_ORIGINS = ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:4173', 'http://127.0.0.1:4173']
+    CORS_ORIGINS = [
+        'http://localhost:3000', 
+        'http://localhost:5173', 
+        'http://127.0.0.1:5173', 
+        'http://localhost:4173', 
+        'http://127.0.0.1:4173',
+        'https://stoxai.netlify.app',
+        'https://stoxai-backend.onrender.com'
+    ]

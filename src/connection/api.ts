@@ -20,6 +20,7 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
   timeout: 10000, // 10 second timeout
+  withCredentials: false, // Disable credentials for Netlify functions
 });
 
 api.interceptors.request.use(
@@ -91,7 +92,12 @@ export const authAPI = {
     if (USE_MOCK_AUTH) {
       return await mockAuthAPI.register(userData);
     }
-    const response = await api.post("/auth/register", userData);
+    const response = await api.post("/auth/register", {
+      email: userData.email,
+      password: userData.password,
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+    });
     return response.data;
   },
 

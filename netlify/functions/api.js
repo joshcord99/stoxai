@@ -201,8 +201,13 @@ exports.handler = async (event, context) => {
               email: user.email,
               first_name: user.first_name,
               last_name: user.last_name,
+              full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+              created_at: user.created_at,
+              is_active: true,
+              watchlist: [],
             },
-            token,
+            access_token: token,
+            refresh_token: token, // For simplicity, using same token as refresh
           }),
         };
       } catch (error) {
@@ -282,9 +287,13 @@ exports.handler = async (event, context) => {
               email: user.email,
               first_name: user.first_name,
               last_name: user.last_name,
+              full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
               watchlist: user.watchlist || [],
+              created_at: user.created_at,
+              is_active: true,
             },
-            token,
+            access_token: token,
+            refresh_token: token, // For simplicity, using same token as refresh
           }),
         };
       } catch (error) {
@@ -350,8 +359,10 @@ exports.handler = async (event, context) => {
               email: user.email,
               first_name: user.first_name,
               last_name: user.last_name,
+              full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
               watchlist: user.watchlist || [],
               created_at: user.created_at,
+              is_active: true,
             },
           }),
         };
