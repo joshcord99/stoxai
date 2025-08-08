@@ -2,8 +2,24 @@ const { neon } = require("@neondatabase/serverless");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
+// Debug environment variables
+console.log("=== DEBUG: Environment Variables ===");
+console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
+console.log("JWT_SECRET_KEY exists:", !!process.env.JWT_SECRET_KEY);
+console.log("OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
+console.log("DATABASE_URL length:", process.env.DATABASE_URL ? process.env.DATABASE_URL.length : 0);
+console.log("DATABASE_URL starts with:", process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 20) + "..." : "undefined");
+
 // Initialize database connection
-const sql = neon();
+let sql;
+try {
+  console.log("=== DEBUG: Initializing database connection ===");
+  sql = neon();
+  console.log("Database connection initialized successfully");
+} catch (error) {
+  console.error("=== DEBUG: Database connection error ===", error);
+  throw error;
+}
 
 // JWT configuration
 const JWT_SECRET = process.env.JWT_SECRET_KEY || "your-jwt-secret-key";
@@ -36,6 +52,7 @@ async function comparePassword(password, hashedPassword) {
 // Initialize database tables
 async function initializeDatabase() {
   try {
+    console.log("=== DEBUG: Creating users table ===");
     await sql`
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,
@@ -48,8 +65,10 @@ async function initializeDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+    console.log("=== DEBUG: Users table created/verified successfully ===");
   } catch (error) {
-    console.error("Database initialization error:", error);
+    console.error("=== DEBUG: Database initialization error ===", error);
+    throw error;
   }
 }
 
@@ -73,8 +92,14 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    console.log("=== DEBUG: Starting request handler ===");
+    console.log("Request path:", event.path);
+    console.log("Request method:", event.httpMethod);
+    
     // Initialize database
+    console.log("=== DEBUG: Calling initializeDatabase ===");
     await initializeDatabase();
+    console.log("=== DEBUG: Database initialization completed ===");
 
     const path = event.path.replace("/.netlify/functions/api", "");
     const method = event.httpMethod;
@@ -90,7 +115,12 @@ exports.handler = async (event, context) => {
     }
 
     // Route handling
+    console.log("=== DEBUG: Route handling ===");
+    console.log("Path:", path);
+    console.log("Method:", method);
+    
     if (path === "/health" && method === "GET") {
+      console.log("=== DEBUG: Health check endpoint called ===");
       return {
         statusCode: 200,
         headers,
