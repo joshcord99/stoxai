@@ -77,6 +77,15 @@ async function initializeDatabase() {
       )
     `;
     console.log("=== DEBUG: Users table created/verified successfully ===");
+    
+    // Add watchlist column if it doesn't exist (migration)
+    console.log("=== DEBUG: Checking for watchlist column ===");
+    try {
+      await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS watchlist TEXT[]`;
+      console.log("=== DEBUG: Watchlist column migration completed ===");
+    } catch (migrationError) {
+      console.log("=== DEBUG: Watchlist column already exists or migration failed ===", migrationError.message);
+    }
   } catch (error) {
     console.error("=== DEBUG: Database initialization error ===", error);
     throw error;
