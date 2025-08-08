@@ -25,9 +25,9 @@ In your Netlify dashboard, go to **Site settings** → **Environment variables**
 ### Required Variables
 
 ```
-JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
-NETLIFY_DATABASE_URL=postgresql://neondb_owner:npg_hMcwCPvB7RJ9@ep-bold-bird-aetk8tp5-pooler.c-2.us-east-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require
-NETLIFY_DATABASE_URL_UNPOOLED=postgresql://neondb_owner:npg_hMcwCPvB7RJ9@ep-bold-bird-aetk8tp5.c-2.us-east-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require
+JWT_SECRET_KEY=your-actual-secure-jwt-secret-key
+NETLIFY_DATABASE_URL=your-neon-database-url
+NETLIFY_DATABASE_URL_UNPOOLED=your-neon-database-url-unpooled
 ```
 
 ### Optional Variables (for development)
@@ -87,6 +87,7 @@ VITE_USE_MOCK_AUTH=true
    - View recent invocations and logs
 
 2. **Test Local Development**:
+
    ```bash
    cd stoxai
    npm install

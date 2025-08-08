@@ -18,6 +18,7 @@ This guide will help you migrate from your current two-repository setup (stoxai 
 ### Step 1: Backup Current Data
 
 1. **Export User Data** (if any users exist):
+
    ```bash
    # From your current backend
    curl -X GET "https://your-render-backend.com/api/account/export" \
@@ -39,18 +40,21 @@ This guide will help you migrate from your current two-repository setup (stoxai 
 #### In Netlify Dashboard:
 
 **Remove old variables:**
+
 - Any backend-specific variables
 
 **Add new variables:**
+
 ```
-JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
-NETLIFY_DATABASE_URL=postgresql://neondb_owner:npg_hMcwCPvB7RJ9@ep-bold-bird-aetk8tp5-pooler.c-2.us-east-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require
-NETLIFY_DATABASE_URL_UNPOOLED=postgresql://neondb_owner:npg_hMcwCPvB7RJ9@ep-bold-bird-aetk8tp5.c-2.us-east-2.aws.neon.tech/neondb?channel_binding=require&sslmode=require
+JWT_SECRET_KEY=your-actual-secure-jwt-secret-key
+NETLIFY_DATABASE_URL=your-neon-database-url
+NETLIFY_DATABASE_URL_UNPOOLED=your-neon-database-url-unpooled
 ```
 
 ### Step 4: Update Frontend Configuration
 
 The frontend has been updated to:
+
 - Use Netlify functions instead of external backend
 - Handle authentication via JWT
 - Connect directly to Neon database
@@ -58,6 +62,7 @@ The frontend has been updated to:
 ### Step 5: Test the Migration
 
 1. **Deploy to Netlify**:
+
    ```bash
    cd stoxai
    git add .
@@ -90,14 +95,14 @@ The frontend has been updated to:
 
 ## API Endpoint Mapping
 
-| Old Flask Endpoint | New Netlify Function | Notes |
-|-------------------|---------------------|-------|
-| `/api/auth/login` | `/api/auth/login` | Same endpoint |
-| `/api/auth/register` | `/api/auth/register` | Same endpoint |
-| `/api/auth/profile` | `/api/user/profile` | Updated path |
-| `/api/auth/watchlist` | `/api/user/watchlist` | Updated path |
-| `/api/user-chatbot` | `/api/ai_chatbot` | Updated path |
-| `/api/health` | `/api/health` | Same endpoint |
+| Old Flask Endpoint    | New Netlify Function  | Notes         |
+| --------------------- | --------------------- | ------------- |
+| `/api/auth/login`     | `/api/auth/login`     | Same endpoint |
+| `/api/auth/register`  | `/api/auth/register`  | Same endpoint |
+| `/api/auth/profile`   | `/api/user/profile`   | Updated path  |
+| `/api/auth/watchlist` | `/api/user/watchlist` | Updated path  |
+| `/api/user-chatbot`   | `/api/ai_chatbot`     | Updated path  |
+| `/api/health`         | `/api/health`         | Same endpoint |
 
 ## Database Schema Changes
 
