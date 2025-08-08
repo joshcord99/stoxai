@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "5003:5003"
+      - "5002:5002"
+    environment:
+      - FLASK_ENV=development
+      - DATABASE_URL=postgresql://postgres:password@db:5432/stock_analyst
+      - JWT_SECRET_KEY=your-secret-key-change-in-production
+      - SECRET_KEY=your-secret-key-change-in-production
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/venv
+    networks:
+      - stock-analyst-network
+
+  db:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=stock_analyst
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - stock-analyst-network
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    networks:
+      - stock-analyst-network
+
+volumes:
+  postgres_data:
+
+networks:
+  stock-analyst-network:
+    driver: bridge 

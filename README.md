@@ -48,18 +48,21 @@ stoxai/
 ### 2. Local Development
 
 1. Clone the repository:
+
    ```bash
    git clone <your-repo-url>
    cd stoxai
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
 
 3. Set up environment variables:
    Create a `.env` file in the root directory:
+
    ```
    VITE_USE_MOCK_AUTH=true
    ```
@@ -79,6 +82,7 @@ stoxai/
 
 2. **Environment Variables**:
    In your Netlify dashboard, set these environment variables:
+
    ```
    JWT_SECRET_KEY=your-jwt-secret-key
    NETLIFY_DATABASE_URL=your-neon-database-url
@@ -110,24 +114,30 @@ CREATE TABLE users (
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 
 ### User Management
+
 - `GET /api/user/profile` - Get user profile
 - `PUT /api/user/watchlist` - Update watchlist
 
 ### Chatbot
+
 - `POST /api/ai_chatbot` - Send message to AI chatbot
 
 ### Stock Data
+
 - `GET /api/available-assets` - Get available assets
 - `GET /api/available-stocks` - Get available stocks
 
 ### Account Management
+
 - `DELETE /api/account/delete` - Delete user account
 
 ### Health Check
+
 - `GET /api/health` - API health check
 
 ## Development Notes

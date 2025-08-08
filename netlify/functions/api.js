@@ -6,8 +6,7 @@ const bcrypt = require("bcryptjs");
 const sql = neon();
 
 // JWT configuration
-const JWT_SECRET =
-  process.env.JWT_SECRET_KEY || "your-jwt-secret-key";
+const JWT_SECRET = process.env.JWT_SECRET_KEY || "your-jwt-secret-key";
 const JWT_EXPIRES_IN = "7d";
 
 // Helper function to create JWT token
