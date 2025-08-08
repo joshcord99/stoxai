@@ -382,6 +382,29 @@ exports.handler = async (event, context) => {
       }
     }
 
+    if (path === "/user/profile" && method === "PUT") {
+      const { first_name, last_name } = body;
+
+      try {
+        await sql`
+          UPDATE users 
+          SET first_name = ${first_name}, last_name = ${last_name}, updated_at = CURRENT_TIMESTAMP
+          WHERE id = ${decoded.userId}
+        `;
+
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            success: true,
+            message: "Profile updated successfully",
+          }),
+        };
+      } catch (error) {
+        throw error;
+      }
+    }
+
     if (path === "/user/watchlist" && method === "PUT") {
       const { watchlist } = body;
 

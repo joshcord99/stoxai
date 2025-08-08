@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { authAPI } from "./connection/api";
+import api from "./connection/api";
 
 export interface User {
   id: number;
@@ -25,12 +26,20 @@ export const useUserStore = defineStore("user", {
   getters: {
     fullName: (state) => {
       if (!state.user) return "";
-      return state.user.full_name;
+      // Create full name from first_name and last_name, fallback to full_name
+      const firstName = state.user.first_name || "";
+      const lastName = state.user.last_name || "";
+      const combinedName = `${firstName} ${lastName}`.trim();
+      return combinedName || state.user.full_name || "";
     },
 
     displayName: (state) => {
       if (!state.user) return "";
-      return state.user.full_name;
+      // Create full name from first_name and last_name, fallback to full_name
+      const firstName = state.user.first_name || "";
+      const lastName = state.user.last_name || "";
+      const combinedName = `${firstName} ${lastName}`.trim();
+      return combinedName || state.user.full_name || "";
     },
   },
 
@@ -171,6 +180,26 @@ export const useUserStore = defineStore("user", {
         this.user = response.user;
         this.watchlist = response.user.watchlist || [];
         return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    async updateProfile(firstName: string, lastName: string) {
+      try {
+        const response = await api.put("/user/profile", {
+          first_name: firstName,
+          last_name: lastName,
+        });
+        
+        // Update local user data
+        if (this.user) {
+          this.user.first_name = firstName;
+          this.user.last_name = lastName;
+          localStorage.setItem("user", JSON.stringify(this.user));
+        }
+        
+        return response.data;
       } catch (error) {
         throw error;
       }
