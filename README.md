@@ -80,7 +80,7 @@ stoxai/
 2. **Environment Variables**:
    In your Netlify dashboard, set these environment variables:
    ```
-   JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
+   JWT_SECRET_KEY=your-jwt-secret-key
    NETLIFY_DATABASE_URL=your-neon-database-url
    NETLIFY_DATABASE_URL_UNPOOLED=your-neon-database-url-unpooled
    ```
