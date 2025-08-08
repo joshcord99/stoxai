@@ -153,7 +153,7 @@ exports.handler = async (event, context) => {
 
     // Authentication routes
     if (path === "/auth/register" && method === "POST") {
-      const { email, password, first_name, last_name } = body;
+      const { email, password, firstName, lastName } = body;
 
       if (!email || !password) {
         return {
@@ -171,7 +171,7 @@ exports.handler = async (event, context) => {
 
         const result = await sql`
           INSERT INTO users (email, password_hash, first_name, last_name)
-          VALUES (${email}, ${hashedPassword}, ${first_name || null}, ${last_name || null})
+          VALUES (${email}, ${hashedPassword}, ${firstName || null}, ${lastName || null})
           RETURNING id, email, first_name, last_name
         `;
 
