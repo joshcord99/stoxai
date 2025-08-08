@@ -14,7 +14,9 @@ console.log("DATABASE_URL starts with:", process.env.DATABASE_URL ? process.env.
 let sql;
 try {
   console.log("=== DEBUG: Initializing database connection ===");
-  sql = neon();
+  const databaseUrl = process.env.DATABASE_URL;
+  console.log("=== DEBUG: Using explicit DATABASE_URL ===");
+  sql = neon(databaseUrl);
   console.log("Database connection initialized successfully");
 } catch (error) {
   console.error("=== DEBUG: Database connection error ===", error);
