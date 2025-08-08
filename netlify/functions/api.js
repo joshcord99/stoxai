@@ -182,9 +182,9 @@ exports.handler = async (event, context) => {
         const hashedPassword = await hashPassword(password);
 
         const result = await sql`
-          INSERT INTO users (email, password_hash, first_name, last_name)
-          VALUES (${email}, ${hashedPassword}, ${firstName || null}, ${lastName || null})
-          RETURNING id, email, first_name, last_name
+          INSERT INTO users (email, password_hash, first_name, last_name, created_at, updated_at)
+          VALUES (${email}, ${hashedPassword}, ${firstName || null}, ${lastName || null}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+          RETURNING id, email, first_name, last_name, created_at, updated_at
         `;
 
         const user = result[0];
