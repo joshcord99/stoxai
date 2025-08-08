@@ -38,6 +38,7 @@ export const useUserStore = defineStore("user", {
     async login(credentials: { email: string; password: string }) {
       try {
         const response = await authAPI.login(credentials);
+        console.log('=== DEBUG: Login response ===', response);
 
         this.token = response.access_token;
         this.refreshToken = response.refresh_token;
@@ -49,6 +50,13 @@ export const useUserStore = defineStore("user", {
         localStorage.setItem("refresh_token", response.refresh_token);
         localStorage.setItem("user", JSON.stringify(response.user));
         localStorage.setItem("watchlist", JSON.stringify(this.watchlist));
+
+        console.log('=== DEBUG: User store after login ===', {
+          user: this.user,
+          fullName: this.fullName,
+          displayName: this.displayName,
+          storedUser: localStorage.getItem("user")
+        });
 
         return response;
       } catch (error) {
@@ -108,6 +116,13 @@ export const useUserStore = defineStore("user", {
       const userStr = localStorage.getItem("user");
       const watchlistStr = localStorage.getItem("watchlist");
 
+      console.log('=== DEBUG: initializeAuth ===', {
+        hasToken: !!token,
+        hasRefreshToken: !!refreshToken,
+        hasUserStr: !!userStr,
+        userStr: userStr
+      });
+
       if (token && refreshToken && userStr) {
         try {
           this.token = token;
@@ -118,7 +133,14 @@ export const useUserStore = defineStore("user", {
           if (watchlistStr) {
             this.watchlist = JSON.parse(watchlistStr);
           }
+
+          console.log('=== DEBUG: User store after initialization ===', {
+            user: this.user,
+            fullName: this.fullName,
+            displayName: this.displayName
+          });
         } catch (error) {
+          console.error('=== DEBUG: Error initializing auth ===', error);
           this.logout();
         }
       }
