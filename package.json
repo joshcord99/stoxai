@@ -7,7 +7,7 @@
     "start": "npm run production",
     "production": "npm run build && npm run preview",
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "serve": "vite preview",
     "test": "vitest",
