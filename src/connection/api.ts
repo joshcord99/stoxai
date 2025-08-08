@@ -85,8 +85,8 @@ export const authAPI = {
   register: async (userData: {
     email: string;
     password: string;
-    first_name: string;
-    last_name: string;
+    firstName: string;
+    lastName: string;
   }) => {
     if (USE_MOCK_AUTH) {
       return await mockAuthAPI.register(userData);

@@ -31,15 +31,15 @@ const findUserByEmail = (email: string): User | undefined => {
 const createUser = (userData: {
   email: string;
   password: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
 }): User => {
   const user: User = {
     id: Date.now().toString(),
     email: userData.email,
-    first_name: userData.first_name,
-    last_name: userData.last_name,
-    full_name: `${userData.first_name} ${userData.last_name}`,
+    first_name: userData.firstName,
+    last_name: userData.lastName,
+    full_name: `${userData.firstName} ${userData.lastName}`,
     watchlist: [],
   };
 

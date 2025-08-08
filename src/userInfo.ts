@@ -59,8 +59,8 @@ export const useUserStore = defineStore("user", {
     async register(userData: {
       email: string;
       password: string;
-      first_name: string;
-      last_name: string;
+      firstName: string;
+      lastName: string;
     }) {
       try {
         const response = await authAPI.register(userData);
