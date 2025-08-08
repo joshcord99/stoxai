@@ -7,8 +7,16 @@ console.log("=== DEBUG: Environment Variables ===");
 console.log("DATABASE_URL exists:", !!process.env.DATABASE_URL);
 console.log("JWT_SECRET_KEY exists:", !!process.env.JWT_SECRET_KEY);
 console.log("OPENAI_API_KEY exists:", !!process.env.OPENAI_API_KEY);
-console.log("DATABASE_URL length:", process.env.DATABASE_URL ? process.env.DATABASE_URL.length : 0);
-console.log("DATABASE_URL starts with:", process.env.DATABASE_URL ? process.env.DATABASE_URL.substring(0, 20) + "..." : "undefined");
+console.log(
+  "DATABASE_URL length:",
+  process.env.DATABASE_URL ? process.env.DATABASE_URL.length : 0
+);
+console.log(
+  "DATABASE_URL starts with:",
+  process.env.DATABASE_URL
+    ? process.env.DATABASE_URL.substring(0, 20) + "..."
+    : "undefined"
+);
 
 // Initialize database connection
 let sql;
@@ -16,6 +24,7 @@ try {
   console.log("=== DEBUG: Initializing database connection ===");
   const databaseUrl = process.env.DATABASE_URL;
   console.log("=== DEBUG: Using explicit DATABASE_URL ===");
+  console.log("=== DEBUG: Full DATABASE_URL ===", databaseUrl);
   sql = neon(databaseUrl);
   console.log("Database connection initialized successfully");
 } catch (error) {
@@ -97,7 +106,7 @@ exports.handler = async (event, context) => {
     console.log("=== DEBUG: Starting request handler ===");
     console.log("Request path:", event.path);
     console.log("Request method:", event.httpMethod);
-    
+
     // Initialize database
     console.log("=== DEBUG: Calling initializeDatabase ===");
     await initializeDatabase();
@@ -120,7 +129,7 @@ exports.handler = async (event, context) => {
     console.log("=== DEBUG: Route handling ===");
     console.log("Path:", path);
     console.log("Method:", method);
-    
+
     if (path === "/health" && method === "GET") {
       console.log("=== DEBUG: Health check endpoint called ===");
       return {
