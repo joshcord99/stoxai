@@ -287,12 +287,20 @@ const submitRegister = async () => {
     }, 1500);
 
   } catch (err: any) {
-    if (err.response?.data?.error) {
+    console.error('Registration error:', err);
+    
+    if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+      error.value = 'Network timeout. Please check your connection and try again.';
+    } else if (err.response?.status === 404) {
+      error.value = 'Backend service not found. Please contact support.';
+    } else if (err.response?.status === 500) {
+      error.value = 'Server error. Please try again later.';
+    } else if (err.response?.data?.error) {
       error.value = err.response.data.error;
     } else if (err.message) {
       error.value = err.message;
     } else {
-      error.value = 'Registration failed. Please try again.';
+      error.value = 'Network error. Unable to connect to the server.';
     }
   } finally {
     loading.value = false;

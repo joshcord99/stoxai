@@ -39,27 +39,31 @@ const sendMessage = async () => {
   isLoading.value = true
 
   try {
-            const { data } = await axios.post(`${import.meta.env.VITE_BACKEND_URL || 'http://localhost:5003'}/api/user-chatbot`, {
+    // Connect to your backend
+    const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5003';
+    
+    const { data } = await axios.post(`${BACKEND_URL}/api/user-chatbot`, {
       question: userQuestion
     }, {
       headers: { Authorization: `Bearer ${userStore.token}` }
-    })
+    });
 
-    messages.value.pop()
+    messages.value.pop();
 
     if (data.success) {
-      messages.value.push({ text: data.response, sender: 'bot' })
+      messages.value.push({ text: data.response, sender: 'bot' });
     } else {
-      messages.value.push({ text: 'Sorry, I couldn\'t analyze your question right now.', sender: 'bot' })
+      messages.value.push({ text: 'Sorry, I couldn\'t analyze your question right now.', sender: 'bot' });
     }
   } catch (err) {
-    messages.value.pop()
+    console.error('Chatbot error:', err);
+    messages.value.pop();
     messages.value.push({
-              text: `Unable to connect to analysis service. Please ensure the backend is running.`,
+      text: `Unable to connect to analysis service. Please try again later.`,
       sender: 'bot'
-    })
+    });
   } finally {
-    isLoading.value = false
+    isLoading.value = false;
   }
 }
 
