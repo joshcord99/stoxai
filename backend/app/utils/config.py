@@ -17,10 +17,10 @@ class Config:
         'pool_recycle': 300,
     }
     
-    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'your-secret-key-change-in-production'
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY') or 'your-jwt-secret-key'
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=24)
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=30)
     
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key-change-in-production'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-secret-key'
     
     CORS_ORIGINS = ['http://localhost:3000', 'http://localhost:5173', 'http://127.0.0.1:5173', 'http://localhost:4173', 'http://127.0.0.1:4173']

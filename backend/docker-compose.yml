@@ -9,8 +9,8 @@ services:
     environment:
       - FLASK_ENV=development
       - DATABASE_URL=postgresql://postgres:password@db:5432/stock_analyst
-      - JWT_SECRET_KEY=your-secret-key-change-in-production
-      - SECRET_KEY=your-secret-key-change-in-production
+      - JWT_SECRET_KEY=your-jwt-secret-key
+      - SECRET_KEY=your-secret-key
     depends_on:
       - db
     volumes:

@@ -130,8 +130,8 @@ POSTGRES_PASSWORD=your_password
 POSTGRES_DATABASE=stock_analyst
 
 # JWT Configuration
-JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
-SECRET_KEY=your-super-secret-key-change-in-production
+JWT_SECRET_KEY=your-jwt-secret-key
+SECRET_KEY=your-secret-key
 
 # OpenAI Configuration (for AI chatbot)
 OPENAI_API_KEY=your-openai-api-key-here
