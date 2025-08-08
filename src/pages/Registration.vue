@@ -276,8 +276,8 @@ const submitRegister = async () => {
     await userStore.register({
       email: form.email,
       password: form.password,
-      first_name: form.firstName,
-      last_name: form.lastName,
+      firstName: form.firstName,
+      lastName: form.lastName,
     });
 
     success.value = 'Account created successfully! Redirecting to dashboard...';
