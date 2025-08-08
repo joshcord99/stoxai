@@ -21,11 +21,11 @@ const mockUsers: User[] = [];
 const mockTokens = new Map<string, string>(); // token -> email
 
 const generateToken = (): string => {
-  return 'mock_token_' + Math.random().toString(36).substr(2, 9);
+  return "mock_token_" + Math.random().toString(36).substr(2, 9);
 };
 
 const findUserByEmail = (email: string): User | undefined => {
-  return mockUsers.find(user => user.email === email);
+  return mockUsers.find((user) => user.email === email);
 };
 
 const createUser = (userData: {
@@ -40,37 +40,40 @@ const createUser = (userData: {
     first_name: userData.first_name,
     last_name: userData.last_name,
     full_name: `${userData.first_name} ${userData.last_name}`,
-    watchlist: []
+    watchlist: [],
   };
-  
+
   mockUsers.push(user);
   return user;
 };
 
 export const mockAuthAPI = {
-  login: async (credentials: { email: string; password: string }): Promise<AuthResponse> => {
+  login: async (credentials: {
+    email: string;
+    password: string;
+  }): Promise<AuthResponse> => {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     const user = findUserByEmail(credentials.email);
     if (!user) {
-      throw new Error('User not found. Please register first.');
+      throw new Error("User not found. Please register first.");
     }
-    
+
     // In a real app, you'd verify the password
     if (credentials.password.length < 6) {
-      throw new Error('Invalid credentials');
+      throw new Error("Invalid credentials");
     }
-    
+
     const access_token = generateToken();
     const refresh_token = generateToken();
-    
+
     mockTokens.set(access_token, user.email);
-    
+
     return {
       access_token,
       refresh_token,
-      user
+      user,
     };
   },
 
@@ -81,115 +84,115 @@ export const mockAuthAPI = {
     last_name: string;
   }): Promise<AuthResponse> => {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
+    await new Promise((resolve) => setTimeout(resolve, 500));
+
     const existingUser = findUserByEmail(userData.email);
     if (existingUser) {
-      throw new Error('User with this email already exists');
+      throw new Error("User with this email already exists");
     }
-    
+
     if (userData.password.length < 6) {
-      throw new Error('Password must be at least 6 characters long');
+      throw new Error("Password must be at least 6 characters long");
     }
-    
+
     const user = createUser(userData);
     const access_token = generateToken();
     const refresh_token = generateToken();
-    
+
     mockTokens.set(access_token, user.email);
-    
+
     return {
       access_token,
       refresh_token,
-      user
+      user,
     };
   },
 
   getProfile: async (): Promise<User> => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
     // In a real app, you'd get the user from the token
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem("access_token");
     if (!token || !mockTokens.has(token)) {
-      throw new Error('Unauthorized');
+      throw new Error("Unauthorized");
     }
-    
+
     const email = mockTokens.get(token);
     const user = findUserByEmail(email!);
-    
+
     if (!user) {
-      throw new Error('User not found');
+      throw new Error("User not found");
     }
-    
+
     return user;
   },
 
   verifyToken: async (): Promise<{ valid: boolean; user?: User }> => {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    
-    const token = localStorage.getItem('access_token');
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    const token = localStorage.getItem("access_token");
     if (!token || !mockTokens.has(token)) {
       return { valid: false };
     }
-    
+
     const email = mockTokens.get(token);
     const user = findUserByEmail(email!);
-    
+
     return { valid: true, user };
   },
 
   logout: async (): Promise<void> => {
-    await new Promise(resolve => setTimeout(resolve, 200));
-    
-    const token = localStorage.getItem('access_token');
+    await new Promise((resolve) => setTimeout(resolve, 200));
+
+    const token = localStorage.getItem("access_token");
     if (token) {
       mockTokens.delete(token);
     }
   },
 
-  getWatchlist: async (): Promise<string[]> => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    const token = localStorage.getItem('access_token');
+  getWatchlist: async (): Promise<{ watchlist: string[] }> => {
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const token = localStorage.getItem("access_token");
     if (!token || !mockTokens.has(token)) {
-      throw new Error('Unauthorized');
+      throw new Error("Unauthorized");
     }
-    
+
     const email = mockTokens.get(token);
     const user = findUserByEmail(email!);
-    
-    return user?.watchlist || [];
+
+    return { watchlist: user?.watchlist || [] };
   },
 
   addToWatchlist: async (ticker: string): Promise<void> => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    const token = localStorage.getItem('access_token');
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const token = localStorage.getItem("access_token");
     if (!token || !mockTokens.has(token)) {
-      throw new Error('Unauthorized');
+      throw new Error("Unauthorized");
     }
-    
+
     const email = mockTokens.get(token);
     const user = findUserByEmail(email!);
-    
+
     if (user && !user.watchlist.includes(ticker)) {
       user.watchlist.push(ticker);
     }
   },
 
   removeFromWatchlist: async (ticker: string): Promise<void> => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    
-    const token = localStorage.getItem('access_token');
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const token = localStorage.getItem("access_token");
     if (!token || !mockTokens.has(token)) {
-      throw new Error('Unauthorized');
+      throw new Error("Unauthorized");
     }
-    
+
     const email = mockTokens.get(token);
     const user = findUserByEmail(email!);
-    
+
     if (user) {
-      user.watchlist = user.watchlist.filter(t => t !== ticker);
+      user.watchlist = user.watchlist.filter((t) => t !== ticker);
     }
-  }
-}; 
+  },
+};

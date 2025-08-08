@@ -157,7 +157,7 @@ export const useUserStore = defineStore("user", {
     async loadWatchlist() {
       try {
         const response = await authAPI.getWatchlist();
-        this.watchlist = response.watchlist;
+        this.watchlist = response.watchlist || [];
         localStorage.setItem("watchlist", JSON.stringify(this.watchlist));
         return response;
       } catch (error) {

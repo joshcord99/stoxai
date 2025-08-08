@@ -1,190 +1,164 @@
-# Stock Analyst Frontend
+# StoxAI - Stock Analysis Platform
 
-A Vue.js 3 frontend application for the Stock Analyst platform with real-time market data, portfolio management, and AI-powered chatbot integration.
+A comprehensive stock analysis platform built with Vue.js and deployed on Netlify with Neon database integration.
 
 ## Features
 
-- **Modern Vue.js 3** with TypeScript and Composition API
-- **Real-time Market Data** with live stock prices and charts
-- **Portfolio Management** with watchlist functionality
-- **AI Chatbot Integration** for stock analysis and investment advice
-- **Responsive Design** with Tailwind CSS
-- **User Authentication** with JWT tokens
-- **Chart.js Integration** for data visualization
+- User authentication and registration
+- Real-time stock data visualization
+- AI-powered chatbot for stock analysis
+- Personalized watchlists
+- Market headlines and news
+- Portfolio tracking
+- Responsive design with Tailwind CSS
 
-## Quick Start
+## Tech Stack
 
-### Prerequisites
-
-- Node.js >= 16.0.0
-- npm >= 8.0.0
-
-### Installation
-
-```bash
-# Install dependencies
-npm install
-
-# Create environment file
-cp env.example .env
-# Edit .env with your backend URL
-
-# Start development server
-npm run dev
-```
-
-## Environment Configuration
-
-The frontend can connect to different backend environments by setting the `VITE_BACKEND_URL` environment variable.
-
-### Development (Local Backend)
-
-```env
-VITE_BACKEND_URL=http://localhost:5003
-```
-
-### Production (Deployed Backend)
-
-```env
-VITE_BACKEND_URL=https://your-backend-api.com
-```
-
-### Environment Files
-
-- `env.example` - Template with default values
-- `env.development` - Development environment settings
-- `env.production` - Production environment settings
-
-## Available Scripts
-
-### Development
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-
-### Code Quality
-
-- `npm run lint` - Lint code with ESLint
-- `npm run format` - Format code with Prettier
-- `npm run test` - Run tests with Vitest
-
-### Build & Deploy
-
-- `npm run build` - Build the application
-- `npm run serve` - Serve the built application
+- **Frontend**: Vue.js 3 with TypeScript
+- **Backend**: Netlify Serverless Functions
+- **Database**: Neon PostgreSQL
+- **Styling**: Tailwind CSS
+- **Charts**: Chart.js with vue-chartjs
+- **Authentication**: JWT with bcryptjs
 
 ## Project Structure
 
 ```
-frontend/
-├── src/
-│   ├── components/      # Vue components
-│   │   ├── ChatBot.vue
-│   │   ├── Header.vue
-│   │   ├── Footer.vue
-│   │   └── ...
-│   ├── pages/          # Vue pages/routes
-│   │   ├── Dashboard.vue
-│   │   ├── Login.vue
-│   │   ├── Registration.vue
-│   │   └── ...
-│   ├── connection/     # API services
-│   │   └── api.ts      # Backend API client
-│   ├── services/       # External API services
-│   │   ├── finnhubApi.ts
-│   │   ├── twelveDataApi.ts
-│   │   └── currencyLayerApi.ts
-│   ├── tools/          # Utility components
-│   ├── routes/         # Vue Router configuration
-│   ├── userInfo.ts     # User state management
-│   ├── App.vue         # Root component
-│   └── main.ts         # Application entry point
-├── public/             # Static assets
-├── css/               # Global styles
-└── package.json       # Dependencies and scripts
+stoxai/
+├── src/                    # Vue.js source code
+│   ├── components/         # Vue components
+│   ├── pages/             # Page components
+│   ├── connection/         # API connection layer
+│   └── ...
+├── netlify/
+│   └── functions/         # Serverless functions
+│       └── api.js         # Main API handler
+├── netlify.toml           # Netlify configuration
+└── package.json           # Dependencies
 ```
 
-## Backend Integration
+## Setup Instructions
 
-The frontend connects to the Stock Analyst Backend API. Make sure your backend is running and accessible at the URL specified in your environment variables.
+### 1. Prerequisites
 
-### API Endpoints Used
+- Node.js 18+ installed
+- Netlify account
+- Neon database (already provisioned)
 
-- **Authentication**: `/api/auth/*`
-- **User Profile**: `/api/auth/profile`
-- **Watchlist**: `/api/auth/watchlist/*`
-- **Chatbot**: `/api/user-chatbot`
-- **Health Check**: `/api/health`
+### 2. Local Development
 
-## Development
+1. Clone the repository:
+   ```bash
+   git clone <your-repo-url>
+   cd stoxai
+   ```
 
-### Local Development
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-1. **Start Backend**: Ensure your backend is running on port 5003
-2. **Start Frontend**: Run `npm run dev`
-3. **Access**: Open http://localhost:5173
+3. Set up environment variables:
+   Create a `.env` file in the root directory:
+   ```
+   VITE_USE_MOCK_AUTH=true
+   ```
 
-### Connecting to External Backend
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-1. **Set Environment**: Update `VITE_BACKEND_URL` in your `.env` file
-2. **Start Frontend**: Run `npm run dev`
-3. **Verify Connection**: Check browser console for API connection status
+### 3. Netlify Deployment
 
-## Building for Production
+1. **Connect to Netlify**:
+   - Push your code to GitHub
+   - Connect your repository to Netlify
+   - Set the build command: `npm run build`
+   - Set the publish directory: `dist`
 
-```bash
-# Build the application
-npm run build
+2. **Environment Variables**:
+   In your Netlify dashboard, set these environment variables:
+   ```
+   JWT_SECRET_KEY=your-super-secret-jwt-key-change-in-production
+   NETLIFY_DATABASE_URL=your-neon-database-url
+   NETLIFY_DATABASE_URL_UNPOOLED=your-neon-database-url-unpooled
+   ```
 
-# Preview the build
-npm run preview
+3. **Neon Database Setup**:
+   - Your Neon database is already provisioned
+   - The serverless functions will automatically create the required tables
+   - Make sure to claim your database to prevent expiration
 
-# Deploy the dist/ folder to your hosting service
+### 4. Database Schema
+
+The application automatically creates the following table:
+
+```sql
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  first_name VARCHAR(100),
+  last_name VARCHAR(100),
+  watchlist TEXT[],
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-## Dependencies
+## API Endpoints
 
-### Core Dependencies
+### Authentication
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
 
-- **Vue.js 3.5.17** - Progressive JavaScript framework
-- **TypeScript 5.8.3** - Type safety
-- **Vite 7.0.4** - Build tool and dev server
-- **Vue Router 4.5.1** - Client-side routing
-- **Pinia 3.0.3** - State management
+### User Management
+- `GET /api/user/profile` - Get user profile
+- `PUT /api/user/watchlist` - Update watchlist
 
-### UI & Styling
+### Chatbot
+- `POST /api/ai_chatbot` - Send message to AI chatbot
 
-- **Tailwind CSS 3.4.17** - Utility-first CSS framework
-- **Chart.js 4.5.0** - Data visualization
-- **vue-chartjs 5.3.2** - Vue wrapper for Chart.js
+### Stock Data
+- `GET /api/available-assets` - Get available assets
+- `GET /api/available-stocks` - Get available stocks
 
-### HTTP & Data
+### Account Management
+- `DELETE /api/account/delete` - Delete user account
 
-- **Axios 1.11.0** - HTTP client
-- **Marked 16.1.1** - Markdown processing
+### Health Check
+- `GET /api/health` - API health check
 
-### Development
+## Development Notes
 
-- **ESLint** - Code linting
-- **Prettier** - Code formatting
-- **Vitest** - Unit testing
+- The application uses JWT for authentication
+- Passwords are hashed using bcryptjs
+- The database connection uses Neon's serverless driver
+- All API calls are routed through Netlify functions
+- CORS is enabled for cross-origin requests
 
 ## Troubleshooting
 
-### Common Issues
+1. **Database Connection Issues**:
+   - Verify your Neon database URL in environment variables
+   - Ensure the database is claimed and active
 
-- **Backend Connection Error**: Check `VITE_BACKEND_URL` in your `.env` file
-- **CORS Issues**: Ensure backend CORS is configured for your frontend domain
-- **Build Errors**: Run `npm run lint` to check for code issues
+2. **Authentication Issues**:
+   - Check that JWT_SECRET_KEY is set
+   - Verify token expiration settings
 
-### Environment Variables
+3. **Build Issues**:
+   - Ensure Node.js version is 18+
+   - Clear node_modules and reinstall if needed
 
-Make sure your `.env` file contains:
+## Contributing
 
-```env
-VITE_BACKEND_URL=http://localhost:5003
-```
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
 ## License
 
