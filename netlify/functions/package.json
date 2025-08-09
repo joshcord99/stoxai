@@ -13,7 +13,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["netlify", "serverless", "api"],
+  "keywords": [
+    "netlify",
+    "serverless",
+    "api"
+  ],
   "author": "",
   "license": "ISC"
 }
