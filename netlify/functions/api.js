@@ -2,8 +2,6 @@ const { neon } = require("@neondatabase/serverless");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-
-
 // Initialize database connection
 let sql;
 try {
@@ -56,14 +54,14 @@ async function initializeDatabase() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
-    
+
     // Add watchlist column if it doesn't exist (migration)
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS watchlist TEXT[]`;
     } catch (migrationError) {
       // Column already exists
     }
-    
+
     // Update first_name and last_name columns to allow NULL (migration)
     try {
       await sql`ALTER TABLE users ALTER COLUMN first_name DROP NOT NULL`;
@@ -161,7 +159,8 @@ exports.handler = async (event, context) => {
               email: user.email,
               first_name: user.first_name,
               last_name: user.last_name,
-              full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+              full_name:
+                `${user.first_name || ""} ${user.last_name || ""}`.trim(),
               created_at: user.created_at,
               is_active: true,
               watchlist: [],
@@ -247,7 +246,8 @@ exports.handler = async (event, context) => {
               email: user.email,
               first_name: user.first_name,
               last_name: user.last_name,
-              full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+              full_name:
+                `${user.first_name || ""} ${user.last_name || ""}`.trim(),
               watchlist: user.watchlist || [],
               created_at: user.created_at,
               is_active: true,
@@ -319,7 +319,8 @@ exports.handler = async (event, context) => {
               email: user.email,
               first_name: user.first_name,
               last_name: user.last_name,
-              full_name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+              full_name:
+                `${user.first_name || ""} ${user.last_name || ""}`.trim(),
               watchlist: user.watchlist || [],
               created_at: user.created_at,
               is_active: true,
@@ -411,17 +412,19 @@ exports.handler = async (event, context) => {
       `;
 
       const user = userResult[0];
-      
+
       try {
         // Check if OpenAI API key is available
         const openaiApiKey = process.env.OPENAI_API_KEY;
-        
+
         console.log("OpenAI API Key check:", {
           hasKey: !!openaiApiKey,
           keyLength: openaiApiKey ? openaiApiKey.length : 0,
-          keyStart: openaiApiKey ? openaiApiKey.substring(0, 7) + "..." : "None"
+          keyStart: openaiApiKey
+            ? openaiApiKey.substring(0, 7) + "..."
+            : "None",
         });
-        
+
         if (!openaiApiKey) {
           console.log("No OpenAI API key found, using fallback response");
           // Fallback to basic response if no API key
@@ -440,13 +443,7 @@ exports.handler = async (event, context) => {
           };
         }
 
-        // Use OpenAI API for AI-powered responses
-        const OpenAI = require('openai');
-        const openai = new OpenAI({
-          apiKey: openaiApiKey,
-        });
-
-        // Create a context-aware prompt
+        // Use OpenAI API for AI-powered responses using fetch (no external dependencies)
         const systemPrompt = `You are an expert financial analyst and AI assistant specializing in stock and cryptocurrency analysis. 
 You have access to real-time market data and can provide comprehensive investment insights.
 
@@ -463,17 +460,34 @@ Your capabilities include:
 
 Provide personalized, helpful financial analysis based on the user's question. If they ask about specific stocks or crypto, give detailed insights. If they ask general questions, provide educational financial advice.`;
 
-        const completion = await openai.chat.completions.create({
-          model: "gpt-3.5-turbo",
-          messages: [
-            { role: "system", content: systemPrompt },
-            { role: "user", content: question }
-          ],
-          max_tokens: 500,
-          temperature: 0.7,
-        });
+        const response = await fetch(
+          "https://api.openai.com/v1/chat/completions",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${openaiApiKey}`,
+            },
+            body: JSON.stringify({
+              model: "gpt-3.5-turbo",
+              messages: [
+                { role: "system", content: systemPrompt },
+                { role: "user", content: question },
+              ],
+              max_tokens: 500,
+              temperature: 0.7,
+            }),
+          }
+        );
 
-        const aiResponse = completion.choices[0].message.content;
+        if (!response.ok) {
+          throw new Error(
+            `OpenAI API error: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
+        const aiResponse = data.choices[0].message.content;
 
         return {
           statusCode: 200,
@@ -488,16 +502,17 @@ Provide personalized, helpful financial analysis based on the user's question. I
             ai_enabled: true,
           }),
         };
-
       } catch (error) {
         console.error("AI chatbot error:", error);
         console.error("Error details:", {
           message: error.message,
           stack: error.stack,
-          openaiKey: openaiApiKey ? "Present" : "Missing",
-          openaiKeyLength: openaiApiKey ? openaiApiKey.length : 0
+          openaiKey: process.env.OPENAI_API_KEY ? "Present" : "Missing",
+          openaiKeyLength: process.env.OPENAI_API_KEY
+            ? process.env.OPENAI_API_KEY.length
+            : 0,
         });
-        
+
         // Fallback response on error
         return {
           statusCode: 200,
