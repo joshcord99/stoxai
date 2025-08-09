@@ -47,15 +47,15 @@ api.interceptors.response.use(
       try {
         const refreshToken = localStorage.getItem("refresh_token");
         if (refreshToken) {
-                  const response = await axios.post(
-          `${BACKEND_URL ? `${BACKEND_URL}/api/auth/refresh` : '/.netlify/functions/api/auth/refresh'}`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${refreshToken}`,
-            },
-          }
-        );
+          const response = await axios.post(
+            `${BACKEND_URL ? `${BACKEND_URL}/api/auth/refresh` : "/.netlify/functions/api/auth/refresh"}`,
+            {},
+            {
+              headers: {
+                Authorization: `Bearer ${refreshToken}`,
+              },
+            }
+          );
 
           const { access_token } = response.data;
           localStorage.setItem("access_token", access_token);

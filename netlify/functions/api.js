@@ -411,31 +411,96 @@ exports.handler = async (event, context) => {
       `;
 
       const user = userResult[0];
-      const userContext = `
+      
+      try {
+        // Check if OpenAI API key is available
+        const openaiApiKey = process.env.OPENAI_API_KEY;
+        
+        if (!openaiApiKey) {
+          // Fallback to basic response if no API key
+          return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify({
+              success: true,
+              response: `Hello ${user.first_name}! I can see you have ${(user.watchlist || []).length} items in your watchlist: ${(user.watchlist || []).join(", ") || "None"}.\n\nThis is a basic response. For enhanced AI analysis, please configure an AI service integration.`,
+              user_context: {
+                name: `${user.first_name} ${user.last_name}`,
+                watchlist: user.watchlist || [],
+              },
+              ai_enabled: false,
+            }),
+          };
+        }
+
+        // Use OpenAI API for AI-powered responses
+        const OpenAI = require('openai');
+        const openai = new OpenAI({
+          apiKey: openaiApiKey,
+        });
+
+        // Create a context-aware prompt
+        const systemPrompt = `You are an expert financial analyst and AI assistant specializing in stock and cryptocurrency analysis. 
+You have access to real-time market data and can provide comprehensive investment insights.
+
 User Information:
 - Name: ${user.first_name} ${user.last_name}
-- Watchlist: ${(user.watchlist || []).join(", ")}
+- Watchlist: ${(user.watchlist || []).join(", ") || "None"}
 
-User Question: ${question}
+Your capabilities include:
+- Technical analysis of stocks and cryptocurrencies
+- Price trend analysis and predictions
+- Risk assessment and investment recommendations
+- Market sentiment analysis
+- Portfolio optimization advice
 
-Please provide personalized analysis considering the user's watchlist and preferences.
-      `;
+Provide personalized, helpful financial analysis based on the user's question. If they ask about specific stocks or crypto, give detailed insights. If they ask general questions, provide educational financial advice.`;
 
-      // For now, return a basic response
-      // In production, you would integrate with OpenAI or another AI service
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          success: true,
-          response: `Hello ${user.first_name}! I can see you have ${(user.watchlist || []).length} items in your watchlist: ${(user.watchlist || []).join(", ") || "None"}.\n\nThis is a basic response. For enhanced AI analysis, please configure an AI service integration.`,
-          user_context: {
-            name: `${user.first_name} ${user.last_name}`,
-            watchlist: user.watchlist || [],
-          },
-          ai_enabled: false,
-        }),
-      };
+        const completion = await openai.chat.completions.create({
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: question }
+          ],
+          max_tokens: 500,
+          temperature: 0.7,
+        });
+
+        const aiResponse = completion.choices[0].message.content;
+
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            success: true,
+            response: aiResponse,
+            user_context: {
+              name: `${user.first_name} ${user.last_name}`,
+              watchlist: user.watchlist || [],
+            },
+            ai_enabled: true,
+          }),
+        };
+
+      } catch (error) {
+        console.error("AI chatbot error:", error);
+        
+        // Fallback response on error
+        return {
+          statusCode: 200,
+          headers,
+          body: JSON.stringify({
+            success: true,
+            response: `Hello ${user.first_name}! I can see you have ${(user.watchlist || []).length} items in your watchlist: ${(user.watchlist || []).join(", ") || "None"}.\n\nI'm experiencing some technical difficulties with my AI analysis right now. Please try again later for enhanced insights.`,
+            user_context: {
+              name: `${user.first_name} ${user.last_name}`,
+              watchlist: user.watchlist || [],
+            },
+            ai_enabled: false,
+            error: "AI service temporarily unavailable",
+          }),
+        };
+      }
     }
 
     // Stock data routes
