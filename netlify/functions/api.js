@@ -443,7 +443,7 @@ exports.handler = async (event, context) => {
           };
         }
 
-        // Use OpenAI API for AI-powered responses using fetch (no external dependencies)
+        // Use OpenAI API for general financial questions
         const systemPrompt = `You are an expert financial analyst and AI assistant specializing in stock and cryptocurrency analysis. 
 You have access to real-time market data and can provide comprehensive investment insights.
 

@@ -59,18 +59,54 @@ def create_app(config_class=Config):
     def stock_analysis():
         try:
             data = request.get_json()
+            symbol = data.get('symbol', '')
             question = data.get('question', '')
             
-            if not question:
-                return jsonify({'success': False, 'error': 'Question is required'}), 400
+            if not symbol or not question:
+                return jsonify({'success': False, 'error': 'Symbol and question are required'}), 400
             
-            response = f"Analysis for: {question}\n\nThis is a basic stock analysis. For enhanced AI analysis, please ensure the enhanced analysis service is running."
+            # Import and use your Python stock analyzer
+            sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'chatbot', 'stock_analyzer_model'))
+            from stock_analyzer import StockAnalyzer
             
-            return jsonify({
-                'success': True,
-                'response': response
-            })
+            analyzer = StockAnalyzer()
+            
+            # Generate investment advice
+            advice = analyzer.generate_investment_advice(symbol)
+            
+            if advice and not advice.get('error'):
+                # Determine question type for better formatting
+                question_type = "general"
+                if 'trend' in question.lower() or 'going' in question.lower():
+                    question_type = "trend"
+                elif any(word in question.lower() for word in ['buy', 'sell', 'hold']):
+                    question_type = "buy_sell"
+                elif any(word in question.lower() for word in ['risk', 'safe', 'dangerous']):
+                    question_type = "risk"
+                
+                # Get formatted investment insight
+                response = analyzer.get_investment_insight(symbol, question_type)
+                
+                return jsonify({
+                    'success': True,
+                    'response': response,
+                    'analysis_type': 'stock_analysis',
+                    'symbol': symbol,
+                    'technical_data': {
+                        'current_price': advice.get('current_price'),
+                        'trend': advice.get('trend'),
+                        'recommendation': advice.get('recommendation'),
+                        'risk_score': advice.get('risk_score')
+                    }
+                })
+            else:
+                return jsonify({
+                    'success': False,
+                    'error': f'Unable to analyze {symbol}. Please check if data is available.'
+                }), 400
+                
         except Exception as e:
+            print(f"Stock analysis error: {e}")
             return jsonify({'success': False, 'error': str(e)}), 500
     
     @app.route('/api/available-assets', methods=['GET'])

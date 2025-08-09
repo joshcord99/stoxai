@@ -39,12 +39,54 @@ const sendMessage = async () => {
   isLoading.value = true
 
   try {
-    // Use Netlify function for chatbot
-    const { data } = await axios.post('/.netlify/functions/api/ai_chatbot', {
-      question: userQuestion
-    }, {
-      headers: { Authorization: `Bearer ${userStore.token}` }
-    });
+    // Check if this is a stock/crypto analysis question
+    const stockSymbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'META', 'NVDA', 'NFLX', 'BTC', 'ETH', 'ADA', 'SOL', 'DOT', 'LINK', 'UNI', 'MATIC', 'AVAX', 'FTM', 'NEAR', 'ICP', 'FIL', 'XTZ', 'THETA', 'CAKE', 'CHZ', 'HOT', 'DOGE', 'SHIB', 'MANA', 'SAND', 'ENJ', 'AXS', 'GALA'];
+    
+    let isStockQuestion = false;
+    let detectedSymbol = null;
+    
+    for (const symbol of stockSymbols) {
+      if (userQuestion.toUpperCase().includes(symbol)) {
+        isStockQuestion = true;
+        detectedSymbol = symbol;
+        break;
+      }
+    }
+
+    let data;
+    
+    if (isStockQuestion && detectedSymbol) {
+      // Use Python backend for stock analysis
+      console.log(`Routing stock question about ${detectedSymbol} to Python backend`);
+      
+      try {
+        const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5003';
+        const response = await axios.post(`${BACKEND_URL}/api/stock-analysis`, {
+          symbol: detectedSymbol,
+          question: userQuestion
+        }, {
+          headers: { Authorization: `Bearer ${userStore.token}` }
+        });
+        data = response.data;
+      } catch (stockError) {
+        console.log('Python backend not available, falling back to Netlify function');
+        // Fallback to Netlify function if Python backend is down
+        const netlifyResponse = await axios.post('/.netlify/functions/api/ai_chatbot', {
+          question: userQuestion
+        }, {
+          headers: { Authorization: `Bearer ${userStore.token}` }
+        });
+        data = netlifyResponse.data;
+      }
+    } else {
+      // Use Netlify function for general questions
+      const netlifyResponse = await axios.post('/.netlify/functions/api/ai_chatbot', {
+        question: userQuestion
+      }, {
+        headers: { Authorization: `Bearer ${userStore.token}` }
+      });
+      data = netlifyResponse.data;
+    }
 
     messages.value.pop();
 

@@ -21,17 +21,33 @@ A Flask-based REST API with AI-powered chatbot for stock analysis and portfolio 
 
 ### Installation
 
+#### Option 1: Quick Start with Virtual Environment (Recommended)
+
 ```bash
 # Clone the repository
 git clone <your-backend-repo-url>
 cd stock-analyst-backend
 
-# Install dependencies
-npm run setup
+# Create and activate virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install Python dependencies
+pip install -r requirements.txt
 
 # Create environment file
 cp env.example .env
 # Edit .env with your configuration
+
+# Start backend server
+./start_backend.sh  # On Windows: python run_server.py
+```
+
+#### Option 2: Using npm scripts (Legacy)
+
+```bash
+# Install dependencies
+npm run setup
 
 # Start development server
 npm run dev
@@ -66,6 +82,19 @@ npm run dev
 
 ## Architecture
 
+### New Hybrid Architecture (Recommended)
+
+**Frontend**: Netlify (Vue.js)
+
+- **User Management**: Netlify Functions (login, registration, profile)
+- **Stock Analysis**: Python Backend (direct access to CSV data and technical analysis)
+
+**Backend**: Python Flask
+
+- **Stock Analysis**: Direct integration with StockAnalyzer class
+- **Market Data**: Access to local CSV files with historical data
+- **Technical Indicators**: SMA, EMA, RSI, MACD, Bollinger Bands
+
 ### Ports
 
 - **Backend API**: 5003
@@ -98,6 +127,10 @@ npm run dev
 - `POST /api/auth/watchlist/remove` - Remove stock from watchlist
 
 ### Chatbot & Analysis
+
+- `POST /api/ai_chatbot` - AI-powered chatbot for general questions
+- `POST /api/stock-analysis` - **NEW**: Direct stock analysis using Python StockAnalyzer
+- `POST /api/user-chatbot` - User-specific chatbot with watchlist context
 
 - `POST /api/ai_chatbot` - AI chatbot endpoint
 - `POST /api/test-chatbot` - Test chatbot without authentication
