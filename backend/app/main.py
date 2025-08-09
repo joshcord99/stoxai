@@ -66,26 +66,34 @@ def create_app(config_class=Config):
                 return jsonify({'success': False, 'error': 'Symbol and question are required'}), 400
             
             # Import and use your Python stock analyzer
-            sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'chatbot', 'stock_analyzer_model'))
-            from stock_analyzer import StockAnalyzer
+            sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'chatbot'))
+            from stock_analyzer_model.stock_analyzer import StockAnalyzer
+            
+            print(f"Stock analysis requested for symbol: {symbol}")
+            print(f"Question: {question}")
             
             analyzer = StockAnalyzer()
+            print("StockAnalyzer instance created successfully")
             
             # Generate investment advice
             advice = analyzer.generate_investment_advice(symbol)
+            print(f"Investment advice generated: {advice}")
             
             if advice and not advice.get('error'):
                 # Determine question type for better formatting
                 question_type = "general"
                 if 'trend' in question.lower() or 'going' in question.lower():
-                    question_type = "trend"
-                elif any(word in question.lower() for word in ['buy', 'sell', 'hold']):
-                    question_type = "buy_sell"
+                    question_type = "trend_analysis"
+                elif any(word in question.lower() for word in ['buy', 'sell', 'hold', 'invest', 'investment']):
+                    question_type = "should_i_buy"
                 elif any(word in question.lower() for word in ['risk', 'safe', 'dangerous']):
-                    question_type = "risk"
+                    question_type = "risk_assessment"
+                
+                print(f"Question type detected: {question_type}")
                 
                 # Get formatted investment insight
                 response = analyzer.get_investment_insight(symbol, question_type)
+                print(f"Response generated: {response}")
                 
                 return jsonify({
                     'success': True,

@@ -39,24 +39,79 @@ const sendMessage = async () => {
   isLoading.value = true
 
   try {
-    // Check if this is a stock/crypto analysis question
+    // Enhanced stock/crypto detection with company names and partial matches
+    const stockMappings = {
+      // Company names to symbols
+      'google': 'GOOGL',
+      'alphabet': 'GOOGL',
+      'apple': 'AAPL',
+      'microsoft': 'MSFT',
+      'tesla': 'TSLA',
+      'amazon': 'AMZN',
+      'facebook': 'META',
+      'meta': 'META',
+      'nvidia': 'NVDA',
+      'netflix': 'NFLX',
+      'bitcoin': 'BTC',
+      'ethereum': 'ETH',
+      'cardano': 'ADA',
+      'solana': 'SOL',
+      'polkadot': 'DOT',
+      'chainlink': 'LINK',
+      'uniswap': 'UNI',
+      'polygon': 'MATIC',
+      'avalanche': 'AVAX',
+      'fantom': 'FTM',
+      'near': 'NEAR',
+      'cosmos': 'ATOM',
+      'filecoin': 'FIL',
+      'tezos': 'XTZ',
+      'theta': 'THETA',
+      'pancakeswap': 'CAKE',
+      'chiliz': 'CHZ',
+      'holochain': 'HOT',
+      'dogecoin': 'DOGE',
+      'shiba': 'SHIB',
+      'decentraland': 'MANA',
+      'sandbox': 'SAND',
+      'enjin': 'ENJ',
+      'axie': 'AXS',
+      'gala': 'GALA'
+    };
+    
+    // Standard stock symbols
     const stockSymbols = ['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'AMZN', 'META', 'NVDA', 'NFLX', 'BTC', 'ETH', 'ADA', 'SOL', 'DOT', 'LINK', 'UNI', 'MATIC', 'AVAX', 'FTM', 'NEAR', 'ICP', 'FIL', 'XTZ', 'THETA', 'CAKE', 'CHZ', 'HOT', 'DOGE', 'SHIB', 'MANA', 'SAND', 'ENJ', 'AXS', 'GALA'];
     
     let isStockQuestion = false;
     let detectedSymbol = null;
     
-    for (const symbol of stockSymbols) {
-      if (userQuestion.toUpperCase().includes(symbol)) {
+    // Check for company names first (case-insensitive)
+    const questionLower = userQuestion.toLowerCase();
+    for (const [companyName, symbol] of Object.entries(stockMappings)) {
+      if (questionLower.includes(companyName)) {
         isStockQuestion = true;
         detectedSymbol = symbol;
         break;
       }
     }
-
-    let data;
     
-    if (isStockQuestion && detectedSymbol) {
-      // Use Python backend for stock analysis
+    // If no company name found, check for exact symbol matches
+    if (!isStockQuestion) {
+      for (const symbol of stockSymbols) {
+        if (userQuestion.toUpperCase().includes(symbol)) {
+          isStockQuestion = true;
+          detectedSymbol = symbol;
+          break;
+        }
+      }
+    }
+    
+    // Additional check for investment-related keywords that suggest stock analysis
+    const investmentKeywords = ['invest', 'investment', 'buy', 'sell', 'hold', 'stock', 'shares', 'trading', 'market', 'price', 'trend', 'analysis', 'performance', 'doing', 'how is', 'should i'];
+    const hasInvestmentKeywords = investmentKeywords.some(keyword => questionLower.includes(keyword));
+    
+    // If we have investment keywords and detected a symbol, or if it's clearly a stock question
+    if ((isStockQuestion && detectedSymbol) || (hasInvestmentKeywords && detectedSymbol)) {
       console.log(`Routing stock question about ${detectedSymbol} to Python backend`);
       
       try {

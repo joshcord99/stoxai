@@ -1,6 +1,7 @@
 const { neon } = require("@neondatabase/serverless");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const fetch = require("node-fetch");
 
 // Initialize database connection
 let sql;
