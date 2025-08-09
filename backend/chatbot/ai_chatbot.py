@@ -20,9 +20,6 @@ if api_key:
 else:
     print("WARNING: No OPENAI_API_KEY found in .env file")
 
-def log_debug(msg):
-    if os.getenv("DEBUG_MODE") == "1":
-        print("[DEBUG]", msg)
 
 
 openai_key = os.getenv("OPENAI_API_KEY")
@@ -39,7 +36,7 @@ class AIChatbot:
         self.market_data_path = os.path.abspath(
             os.path.join(current_dir, '..', '..', 'stock-data-collector', 'market_data')
         )
-        log_debug(f"Market data path: {self.market_data_path}")
+
         self.analyzer = StockAnalyzer(data_dir=self.market_data_path)
 
         self.api_key = openai_api_key or os.getenv("OPENAI_API_KEY")
@@ -47,14 +44,13 @@ class AIChatbot:
         if self.use_openai:
             openai.api_key = self.api_key
         else:
-            log_debug("No OpenAI key found — fallback mode")
+            pass
 
         self.conversation_history = []
         self.max_history_length = 10
 
     def process_question(self, question):
         try:
-            log_debug(f"Processing: {question}")
             if not self.use_openai:
                 return self._fallback_response(question)
 
@@ -62,12 +58,10 @@ class AIChatbot:
                 return self._handle_general_conversation(question)
 
             interpretation = self.interpret_question(question)
-            log_debug(f"Interpretation: {interpretation}")
             symbol = interpretation.get("asset_symbol")
 
             if symbol:
                 data = self.analyzer.generate_investment_advice(symbol)
-                log_debug(f"Analysis data: {data}")
                 if data and 'error' not in data:
                     try:
                         return self.generate_insight(data, question)

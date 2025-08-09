@@ -107,7 +107,7 @@ exports.handler = async (event, context) => {
       try {
         body = JSON.parse(event.body);
       } catch (error) {
-        console.error("Error parsing request body:", error);
+        // Error parsing request body
       }
     }
 
@@ -418,16 +418,7 @@ exports.handler = async (event, context) => {
         // Check if OpenAI API key is available
         const openaiApiKey = process.env.OPENAI_API_KEY;
 
-        console.log("OpenAI API Key check:", {
-          hasKey: !!openaiApiKey,
-          keyLength: openaiApiKey ? openaiApiKey.length : 0,
-          keyStart: openaiApiKey
-            ? openaiApiKey.substring(0, 7) + "..."
-            : "None",
-        });
-
         if (!openaiApiKey) {
-          console.log("No OpenAI API key found, using fallback response");
           // Fallback to basic response if no API key
           return {
             statusCode: 200,
@@ -504,29 +495,18 @@ Provide personalized, helpful financial analysis based on the user's question. I
           }),
         };
       } catch (error) {
-        console.error("AI chatbot error:", error);
-        console.error("Error details:", {
-          message: error.message,
-          stack: error.stack,
-          openaiKey: process.env.OPENAI_API_KEY ? "Present" : "Missing",
-          openaiKeyLength: process.env.OPENAI_API_KEY
-            ? process.env.OPENAI_API_KEY.length
-            : 0,
-        });
-
         // Fallback response on error
         return {
           statusCode: 200,
           headers,
           body: JSON.stringify({
             success: true,
-            response: `Hello ${user.first_name}! I can see you have ${(user.watchlist || []).length} items in your watchlist: ${(user.watchlist || []).join(", ") || "None"}.\n\nI'm experiencing some technical difficulties with my AI analysis right now. Please try again later for enhanced insights.\n\nDebug: ${error.message}`,
+            response: `Hello ${user.first_name}! I can see you have ${(user.watchlist || []).length} items in your watchlist: ${(user.watchlist || []).join(", ") || "None"}.\n\nI'm experiencing some technical difficulties with my AI analysis right now. Please try again later for enhanced insights.`,
             user_context: {
               name: `${user.first_name} ${user.last_name}`,
               watchlist: user.watchlist || [],
             },
             ai_enabled: false,
-            error: error.message,
           }),
         };
       }
@@ -629,7 +609,6 @@ Provide personalized, helpful financial analysis based on the user's question. I
       }),
     };
   } catch (error) {
-    console.error("Server error:", error);
     return {
       statusCode: 500,
       headers,

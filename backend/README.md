@@ -176,7 +176,6 @@ CURRENCY_LAYER_API_KEY=your-currency-layer-api-key
 
 # Development Settings
 FLASK_ENV=development
-DEBUG=True
 ```
 
 ## Project Structure

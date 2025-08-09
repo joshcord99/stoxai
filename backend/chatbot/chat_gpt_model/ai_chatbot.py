@@ -49,7 +49,6 @@ class AIChatbot:
                 return self._fallback_response(question)
 
             question_type = self._classify_question_type(question)
-            print(f"[DEBUG] Question classified as: {question_type}")
             
             if question_type == "GENERAL_CONVERSATION":
                 return self._handle_general_conversation(question)
@@ -62,10 +61,7 @@ class AIChatbot:
             elif question_type == "FINANCIAL_ADVICE":
                 return self._handle_general_financial_question(question)
             else:
-  
-                print(f"[DEBUG] AI classification returned '{question_type}', trying fallback...")
                 fallback_type = self._fallback_classification(question)
-                print(f"[DEBUG] Fallback classification: {fallback_type}")
                 
                 if fallback_type == "WATCHLIST_QUERY":
                     return self._handle_watchlist_question(question)
@@ -499,9 +495,7 @@ class AIChatbot:
                         user_info['email'] = line.replace("- Email:", "").strip()
                 
                 if 'name' in user_info:
-                    print(f"[DEBUG] Extracted user info: {user_info}")
                     return user_info
-            print(f"[DEBUG] No 'User Information:' found in question or missing name")
             return None
         except Exception as e:
             print("[ERROR] _extract_user_info:", e)
@@ -603,7 +597,6 @@ class AIChatbot:
 
     def _handle_watchlist_question(self, question):
         """Handle watchlist-specific questions"""
-        print(f"[DEBUG] Handling watchlist question: {question[:200]}...")
         
        
         if self._is_multiple_stock_question(question):
@@ -631,8 +624,6 @@ class AIChatbot:
             else:
                 return f"Hello {user_info.get('name', 'there')}! You currently have no items in your watchlist. You can add stocks or cryptocurrencies to your watchlist to track them."
         else:
-            
-            print(f"[DEBUG] User info extraction failed. Trying manual parsing...")
             try:
                
                 if "Watchlist:" in question:

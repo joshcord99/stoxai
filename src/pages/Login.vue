@@ -177,22 +177,14 @@ const submitLogin = async () => {
   success.value = '';
 
   try {
-    console.log('=== DEBUG: Attempting login ===');
-    const response = await userStore.login({
+    await userStore.login({
       email: form.email,
       password: form.password
-    });
-    console.log('=== DEBUG: Login response ===', response);
-    console.log('=== DEBUG: User store state ===', {
-      isAuthenticated: userStore.isAuthenticated,
-      user: userStore.user,
-      token: userStore.token
     });
 
     success.value = 'Login successful! Redirecting...';
     
     setTimeout(() => {
-      console.log('=== DEBUG: Redirecting to dashboard ===');
       router.push('/dashboard');
     }, 1000);
 
