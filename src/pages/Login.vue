@@ -5,12 +5,11 @@
       <StaticNewsTicker />
     </div>
 
-    <div class="absolute top-4 sm:top-8 left-1/2 transform -translate-x-1/2">
-      <h1 class="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center">Stock Analyst</h1>
+    <div class="absolute top-10 sm:top-13 left-1/2 transform -translate-x-1/2">
+      <h1 class="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center">STOXAI</h1>
     </div>
     
     <div class="flex flex-col lg:flex-row w-full max-w-6xl gap-4 sm:gap-8 mt-16 sm:mt-20">
-
       <div class="w-full lg:w-1/2 bg-white p-4 sm:p-6 lg:p-8 rounded-lg shadow-md">
         <h3 class="text-xl sm:text-2xl lg:text-3xl font-medium text-center mb-2 text-gray-600">Welcome Back</h3>
         <h2 class="text-lg sm:text-xl lg:text-2xl font-semibold text-center mb-4 sm:mb-6 text-gray-800">Login to Stock Analyst</h2>
