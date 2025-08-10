@@ -26,7 +26,6 @@ export const useUserStore = defineStore("user", {
   getters: {
     fullName: (state) => {
       if (!state.user) return "";
-      // Create full name from first_name and last_name, fallback to full_name
       const firstName = state.user.first_name || "";
       const lastName = state.user.last_name || "";
       const combinedName = `${firstName} ${lastName}`.trim();
@@ -35,7 +34,6 @@ export const useUserStore = defineStore("user", {
 
     displayName: (state) => {
       if (!state.user) return "";
-      // Create full name from first_name and last_name, fallback to full_name
       const firstName = state.user.first_name || "";
       const lastName = state.user.last_name || "";
       const combinedName = `${firstName} ${lastName}`.trim();
@@ -169,8 +167,6 @@ export const useUserStore = defineStore("user", {
           first_name: firstName,
           last_name: lastName,
         });
-        
-        // Update local user data
         if (this.user) {
           this.user.first_name = firstName;
           this.user.last_name = lastName;

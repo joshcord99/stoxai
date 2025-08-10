@@ -160,100 +160,100 @@ const getTabCount = (type: 'stock' | 'crypto' | 'forex') => {
 
 <template>
   <div class="min-h-screen bg-gray-900">
-    <div class="container mx-auto px-4 py-8">
-      <div class="bg-white rounded-lg shadow-lg p-6">
-        <h1 class="text-3xl font-bold text-gray-900 mb-6 text-center">Tickers Directory</h1>
+    <div class="container mx-auto px-4 py-4 sm:py-8">
+      <div class="bg-white rounded-lg shadow-lg p-4 sm:p-6">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-4 sm:mb-6 text-center">Tickers Directory</h1>
         
-        <div class="mb-6">
+        <div class="mb-4 sm:mb-6">
           <input
             v-model="searchQuery"
             type="text"
             placeholder="Search tickers or company names..."
-            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            class="w-full px-3 sm:px-4 py-2 sm:py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm sm:text-base"
           />
         </div>
         
-        <div class="flex space-x-2 mb-6">
+        <div class="flex flex-wrap gap-2 mb-4 sm:mb-6">
           <button
             @click="activeTab = 'all'"
             :class="activeTab === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-            class="px-4 py-2 rounded-lg font-medium transition-colors"
+            class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
           >
             All ({{ tickers.length }})
           </button>
           <button
             @click="activeTab = 'stocks'"
             :class="activeTab === 'stocks' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-            class="px-4 py-2 rounded-lg font-medium transition-colors"
+            class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
           >
             Stocks ({{ getTabCount('stock') }})
           </button>
           <button
             @click="activeTab = 'crypto'"
             :class="activeTab === 'crypto' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-            class="px-4 py-2 rounded-lg font-medium transition-colors"
+            class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
           >
             Crypto ({{ getTabCount('crypto') }})
           </button>
           <button
             @click="activeTab = 'forex'"
             :class="activeTab === 'forex' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-            class="px-4 py-2 rounded-lg font-medium transition-colors"
+            class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
           >
             Forex ({{ getTabCount('forex') }})
           </button>
         </div>
         
-        <div class="space-y-6">
+        <div class="space-y-4 sm:space-y-6">
           <div
             v-for="(tickers, letter) in groupedTickers"
             :key="letter"
-            class="space-y-4"
+            class="space-y-3 sm:space-y-4"
           >
-            <div class="flex items-center space-x-4">
+            <div class="flex items-center space-x-2 sm:space-x-4">
               <div class="flex-shrink-0">
-                <div class="w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
+                <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm sm:text-lg">
                   {{ letter }}
                 </div>
               </div>
               <div class="flex-1 border-t border-gray-300"></div>
             </div>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
               <div
                 v-for="ticker in tickers"
                 :key="ticker.ticker"
-                class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow"
+                class="bg-gray-50 rounded-lg p-3 sm:p-4 border border-gray-200 hover:shadow-md transition-shadow"
               >
-                <div class="flex items-center space-x-3">
+                <div class="flex items-center space-x-2 sm:space-x-3">
                   <div v-if="ticker.logo" class="flex-shrink-0">
                     <img
                       :src="ticker.logo"
                       :alt="ticker.name"
-                      class="w-8 h-8 rounded-full object-cover"
+                      class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
                       @error="(event: Event) => { const target = event.target as HTMLImageElement; if (target) target.style.display = 'none' }"
                     />
                   </div>
                   <div v-else class="flex-shrink-0">
-                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                    <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gray-300 flex items-center justify-center">
                       <span class="text-xs font-medium text-gray-600">{{ ticker.ticker.charAt(0) }}</span>
                     </div>
                   </div>
                   <div class="flex-1 min-w-0">
-                    <div class="flex items-center space-x-2">
-                      <span class="font-bold text-gray-900">{{ ticker.ticker }}</span>
+                    <div class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-2">
+                      <span class="font-bold text-gray-900 text-sm sm:text-base">{{ ticker.ticker }}</span>
                       <span
                         :class="{
                           'bg-green-100 text-green-800': ticker.type === 'stock',
                           'bg-purple-100 text-purple-800': ticker.type === 'crypto',
                           'bg-blue-100 text-blue-800': ticker.type === 'forex'
                         }"
-                        class="px-2 py-1 text-xs font-medium rounded-full"
+                        class="px-2 py-1 text-xs font-medium rounded-full self-start sm:self-auto"
                       >
                         {{ ticker.type }}
                       </span>
                     </div>
-                    <div class="text-sm text-gray-600 truncate">{{ ticker.name }}</div>
+                    <div class="text-xs sm:text-sm text-gray-600 truncate">{{ ticker.name }}</div>
                   </div>
                 </div>
               </div>
@@ -262,7 +262,7 @@ const getTabCount = (type: 'stock' | 'crypto' | 'forex') => {
         </div>
         
         <div v-if="filteredTickers.length === 0" class="text-center py-8">
-          <p class="text-gray-500 text-lg">No tickers found matching your search.</p>
+          <p class="text-gray-500 text-base sm:text-lg">No tickers found matching your search.</p>
         </div>
       </div>
     </div>

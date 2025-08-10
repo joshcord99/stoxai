@@ -112,33 +112,28 @@ onMounted(() => {
 
 <template>
   <div class="w-full">
-    <div v-if="!finnhubApi.hasApiKey()" class="mb-4 p-3 bg-yellow-800 border border-yellow-600 rounded-lg">
-      <div class="text-yellow-200 text-sm">
-        <strong>Demo Mode:</strong> Real-time market data requires a Finnhub API key. 
-        To get live data, add your API key to the <code>.env</code> file as <code>VITE_FINNHUB_API_KEY=your_key_here</code>
-      </div>
-    </div>
+
     
-    <div class="flex justify-between items-center mb-4">
-      <div class="flex space-x-1">
+    <div class="flex justify-between items-center mb-4 gap-3">
+      <div class="flex gap-1 overflow-x-auto">
         <button 
           @click="activeTab = 'stocks'"
           :class="activeTab === 'stocks' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-          class="px-4 py-2 rounded-lg font-medium transition-colors"
+          class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
         >
           Stocks ({{ stockQuotes.length }})
         </button>
         <button 
           @click="activeTab = 'crypto'"
           :class="activeTab === 'crypto' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-          class="px-4 py-2 rounded-lg font-medium transition-colors"
+          class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
         >
           Crypto ({{ cryptoQuotes.length }})
         </button>
         <button 
           @click="activeTab = 'forex'"
           :class="activeTab === 'forex' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-          class="px-4 py-2 rounded-lg font-medium transition-colors"
+          class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
         >
           Forex ({{ forexQuotes.length }})
         </button>
@@ -147,18 +142,19 @@ onMounted(() => {
       <button 
         @click="handleRefresh"
         :disabled="isRefreshing"
-        class="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        class="flex items-center space-x-2 px-2 sm:px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-xs sm:text-sm"
       >
         <svg 
           :class="{ 'animate-spin': isRefreshing }"
-          class="w-4 h-4" 
+          class="hidden sm:block w-3 h-3 sm:w-4 sm:h-4" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
         >
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        <span>{{ isRefreshing ? 'Refreshing...' : 'Refresh' }}</span>
+        <span class="hidden sm:inline">{{ isRefreshing ? 'Refreshing...' : 'Refresh' }}</span>
+        <span class="sm:hidden">{{ isRefreshing ? '...' : '↻' }}</span>
       </button>
     </div>
     
@@ -166,13 +162,14 @@ onMounted(() => {
       <div 
         v-for="stock in stockQuotes" 
         :key="stock.symbol"
-        class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex justify-between items-center"
+        class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
       >
-        <div class="flex items-center space-x-4">
-          <div class="flex items-center space-x-3">
-            <StockLogo :ticker="stock.symbol" />
-            <div class="text-white font-bold text-lg">{{ stock.symbol }}</div>
-          </div>
+        <div class="flex items-center space-x-3">
+          <StockLogo :ticker="stock.symbol" />
+          <div class="text-white font-bold text-lg">{{ stock.symbol }}</div>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <div class="flex items-center">
             <span 
               :class="stock.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
@@ -187,12 +184,12 @@ onMounted(() => {
               ({{ stock.change >= 0 ? '+' : '' }}{{ stock.change.toFixed(2) }})
             </span>
           </div>
-        </div>
-      
-        <div class="flex items-center space-x-4">
-          <div class="text-white font-bold text-lg">${{ stock.currentPrice.toFixed(2) }}</div>
-          <div class="text-xs text-gray-400">
-            H: ${{ stock.high.toFixed(2) }} | L: ${{ stock.low.toFixed(2) }}
+        
+          <div class="flex items-center space-x-4">
+            <div class="text-white font-bold text-lg">${{ stock.currentPrice.toFixed(2) }}</div>
+            <div class="text-xs text-gray-400">
+              H: ${{ stock.high.toFixed(2) }} | L: ${{ stock.low.toFixed(2) }}
+            </div>
           </div>
         </div>
       </div>
@@ -201,13 +198,14 @@ onMounted(() => {
       <div 
         v-for="crypto in cryptoQuotes" 
         :key="crypto.symbol"
-        class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex justify-between items-center"
+        class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
       >
-        <div class="flex items-center space-x-4">
-          <div class="flex items-center space-x-3">
-            <StockLogo :ticker="crypto.symbol" />
-            <div class="text-white font-bold text-lg">{{ crypto.symbol }}</div>
-          </div>
+        <div class="flex items-center space-x-3">
+          <StockLogo :ticker="crypto.symbol" />
+          <div class="text-white font-bold text-lg">{{ crypto.symbol }}</div>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <div class="flex items-center">
             <span 
               :class="crypto.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
@@ -222,13 +220,12 @@ onMounted(() => {
               ({{ crypto.change >= 0 ? '+' : '' }}{{ crypto.change.toFixed(2) }})
             </span>
           </div>
-        </div>
         
-  
-        <div class="flex items-center space-x-4">
-          <div class="text-white font-bold text-lg">${{ crypto.currentPrice.toFixed(2) }}</div>
-          <div class="text-xs text-gray-400">
-            H: ${{ crypto.high.toFixed(2) }} | L: ${{ crypto.low.toFixed(2) }}
+          <div class="flex items-center space-x-4">
+            <div class="text-white font-bold text-lg">${{ crypto.currentPrice.toFixed(2) }}</div>
+            <div class="text-xs text-gray-400">
+              H: ${{ crypto.high.toFixed(2) }} | L: ${{ crypto.low.toFixed(2) }}
+            </div>
           </div>
         </div>
       </div>
@@ -239,14 +236,14 @@ onMounted(() => {
       <div 
         v-for="forex in forexQuotes" 
         :key="forex.symbol"
-        class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex justify-between items-center"
+        class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2"
       >
-    
-        <div class="flex items-center space-x-4">
-          <div class="flex items-center space-x-3">
-            <StockLogo :ticker="forex.symbol" />
-            <div class="text-white font-bold text-lg">{{ forex.symbol }}</div>
-          </div>
+        <div class="flex items-center space-x-3">
+          <StockLogo :ticker="forex.symbol" />
+          <div class="text-white font-bold text-lg">{{ forex.symbol }}</div>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
           <div class="flex items-center">
             <span 
               :class="forex.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
@@ -261,12 +258,12 @@ onMounted(() => {
               ({{ forex.change >= 0 ? '+' : '' }}{{ forex.change.toFixed(2) }})
             </span>
           </div>
-        </div>
         
-        <div class="flex items-center space-x-4">
-          <div class="text-white font-bold text-lg">{{ forex.currentPrice.toFixed(4) }}</div>
-          <div class="text-xs text-gray-400">
-            H: {{ forex.high.toFixed(4) }} | L: {{ forex.low.toFixed(4) }}
+          <div class="flex items-center space-x-4">
+            <div class="text-white font-bold text-lg">{{ forex.currentPrice.toFixed(4) }}</div>
+            <div class="text-xs text-gray-400">
+              H: {{ forex.high.toFixed(4) }} | L: {{ forex.low.toFixed(4) }}
+            </div>
           </div>
         </div>
       </div>

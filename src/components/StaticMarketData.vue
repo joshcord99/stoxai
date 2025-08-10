@@ -513,25 +513,25 @@ const activeTab = ref('stocks')
 
     <div class="flex justify-between items-center mb-4">
 
-      <div class="flex space-x-1">
+      <div class="flex flex-wrap gap-1">
         <button 
           @click="activeTab = 'stocks'"
           :class="activeTab === 'stocks' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-          class="px-4 py-2 rounded-lg font-medium transition-colors"
+          class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
         >
           Stocks ({{ stockQuotes.length }})
         </button>
         <button 
           @click="activeTab = 'crypto'"
           :class="activeTab === 'crypto' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-          class="px-4 py-2 rounded-lg font-medium transition-colors"
+          class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
         >
           Crypto ({{ cryptoQuotes.length }})
         </button>
         <button 
           @click="activeTab = 'forex'"
           :class="activeTab === 'forex' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-          class="px-4 py-2 rounded-lg font-medium transition-colors"
+          class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
         >
           Forex ({{ forexQuotes.length }})
         </button>
@@ -543,32 +543,33 @@ const activeTab = ref('stocks')
       <div 
         v-for="stock in stockQuotes" 
         :key="stock.symbol"
-        class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex justify-between items-center"
+        class="bg-gray-800 rounded-lg p-3 border border-gray-700"
       >
-
-        <div class="flex items-center space-x-4">
-          <div class="text-white font-bold text-lg">{{ stock.symbol }}</div>
-          <div class="flex items-center">
-            <span 
-              :class="stock.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
-              class="text-sm font-medium"
-            >
-              {{ stock.changePercent >= 0 ? '↗' : '↘' }} {{ stock.changePercent.toFixed(2) }}%
-            </span>
-            <span 
-              :class="stock.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
-              class="text-sm ml-2"
-            >
-              ({{ stock.change >= 0 ? '+' : '' }}{{ stock.change.toFixed(2) }})
-            </span>
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+          <div class="flex items-center space-x-2 sm:space-x-4 min-w-0">
+            <div class="text-white font-bold text-base sm:text-lg truncate">{{ stock.symbol }}</div>
+            <div class="flex items-center space-x-1 sm:space-x-2">
+              <span 
+                :class="stock.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
+                class="text-xs sm:text-sm font-medium"
+              >
+                {{ stock.changePercent >= 0 ? '↗' : '↘' }} {{ stock.changePercent.toFixed(2) }}%
+              </span>
+              <span 
+                :class="stock.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
+                class="text-xs sm:text-sm"
+              >
+                ({{ stock.change >= 0 ? '+' : '' }}{{ stock.change.toFixed(2) }})
+              </span>
+            </div>
           </div>
-        </div>
-        
+          
 
-        <div class="flex items-center space-x-4">
-          <div class="text-white font-bold text-lg">${{ stock.currentPrice.toFixed(2) }}</div>
-          <div class="text-xs text-gray-400">
-            H: ${{ stock.high.toFixed(2) }} | L: ${{ stock.low.toFixed(2) }}
+          <div class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
+            <div class="text-white font-bold text-base sm:text-lg">${{ stock.currentPrice.toFixed(2) }}</div>
+            <div class="text-xs text-gray-400 hidden sm:block">
+              H: ${{ stock.high.toFixed(2) }} | L: ${{ stock.low.toFixed(2) }}
+            </div>
           </div>
         </div>
       </div>
@@ -579,31 +580,32 @@ const activeTab = ref('stocks')
       <div 
         v-for="crypto in cryptoQuotes" 
         :key="crypto.symbol"
-        class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex justify-between items-center"
+        class="bg-gray-800 rounded-lg p-3 border border-gray-700"
       >
-
-        <div class="flex items-center space-x-4">
-          <div class="text-white font-bold text-lg">{{ crypto.symbol }}</div>
-          <div class="flex items-center">
-            <span 
-              :class="crypto.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
-              class="text-sm font-medium"
-            >
-              {{ crypto.changePercent >= 0 ? '↗' : '↘' }} {{ crypto.changePercent.toFixed(2) }}%
-            </span>
-            <span 
-              :class="crypto.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
-              class="text-sm ml-2"
-            >
-              ({{ crypto.change >= 0 ? '+' : '' }}{{ crypto.change.toFixed(2) }})
-            </span>
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+          <div class="flex items-center space-x-2 sm:space-x-4 min-w-0">
+            <div class="text-white font-bold text-base sm:text-lg truncate">{{ crypto.symbol }}</div>
+            <div class="flex items-center space-x-1 sm:space-x-2">
+              <span 
+                :class="crypto.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
+                class="text-xs sm:text-sm font-medium"
+              >
+                {{ crypto.changePercent >= 0 ? '↗' : '↘' }} {{ crypto.changePercent.toFixed(2) }}%
+              </span>
+              <span 
+                :class="crypto.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
+                class="text-xs sm:text-sm"
+              >
+                ({{ crypto.change >= 0 ? '+' : '' }}{{ crypto.change.toFixed(2) }})
+              </span>
+            </div>
           </div>
-        </div>
 
-        <div class="flex items-center space-x-4">
-          <div class="text-white font-bold text-lg">${{ crypto.currentPrice.toFixed(2) }}</div>
-          <div class="text-xs text-gray-400">
-            H: ${{ crypto.high.toFixed(2) }} | L: ${{ crypto.low.toFixed(2) }}
+          <div class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
+            <div class="text-white font-bold text-base sm:text-lg">${{ crypto.currentPrice.toFixed(2) }}</div>
+            <div class="text-xs text-gray-400 hidden sm:block">
+              H: ${{ crypto.high.toFixed(2) }} | L: ${{ crypto.low.toFixed(2) }}
+            </div>
           </div>
         </div>
       </div>
@@ -614,32 +616,33 @@ const activeTab = ref('stocks')
       <div 
         v-for="forex in forexQuotes" 
         :key="forex.symbol"
-        class="bg-gray-800 rounded-lg p-3 border border-gray-700 flex justify-between items-center"
+        class="bg-gray-800 rounded-lg p-3 border border-gray-700"
       >
-    
-        <div class="flex items-center space-x-4">
-          <div class="text-white font-bold text-lg">{{ forex.symbol }}</div>
-          <div class="flex items-center">
-            <span 
-              :class="forex.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
-              class="text-sm font-medium"
-            >
-              {{ forex.changePercent >= 0 ? '↗' : '↘' }} {{ forex.changePercent.toFixed(2) }}%
-            </span>
-            <span 
-              :class="forex.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
-              class="text-sm ml-2"
-            >
-              ({{ forex.change >= 0 ? '+' : '' }}{{ forex.change.toFixed(2) }})
-            </span>
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
+          <div class="flex items-center space-x-2 sm:space-x-4 min-w-0">
+            <div class="text-white font-bold text-base sm:text-lg truncate">{{ forex.symbol }}</div>
+            <div class="flex items-center space-x-1 sm:space-x-2">
+              <span 
+                :class="forex.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
+                class="text-xs sm:text-sm font-medium"
+              >
+                {{ forex.changePercent >= 0 ? '↗' : '↘' }} {{ forex.changePercent.toFixed(2) }}%
+              </span>
+              <span 
+                :class="forex.changePercent >= 0 ? 'text-green-400' : 'text-red-400'"
+                class="text-xs sm:text-sm"
+              >
+                ({{ forex.change >= 0 ? '+' : '' }}{{ forex.change.toFixed(2) }})
+              </span>
+            </div>
           </div>
-        </div>
-        
-        
-        <div class="flex items-center space-x-4">
-          <div class="text-white font-bold text-lg">{{ forex.currentPrice.toFixed(4) }}</div>
-          <div class="text-xs text-gray-400">
-            H: {{ forex.high.toFixed(4) }} | L: {{ forex.low.toFixed(4) }}
+          
+          
+          <div class="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4">
+            <div class="text-white font-bold text-base sm:text-lg">{{ forex.currentPrice.toFixed(4) }}</div>
+            <div class="text-xs text-gray-400 hidden sm:block">
+              H: {{ forex.high.toFixed(4) }} | L: {{ forex.low.toFixed(4) }}
+            </div>
           </div>
         </div>
       </div>

@@ -1,6 +1,3 @@
-// Mock authentication system for development
-// This simulates a backend API for user authentication
-
 interface User {
   id: string;
   email: string;
@@ -16,9 +13,8 @@ interface AuthResponse {
   user: User;
 }
 
-// Mock user database
 const mockUsers: User[] = [];
-const mockTokens = new Map<string, string>(); // token -> email
+const mockTokens = new Map<string, string>();
 
 const generateToken = (): string => {
   return "mock_token_" + Math.random().toString(36).substr(2, 9);
@@ -52,15 +48,12 @@ export const mockAuthAPI = {
     email: string;
     password: string;
   }): Promise<AuthResponse> => {
-    // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     const user = findUserByEmail(credentials.email);
     if (!user) {
       throw new Error("User not found. Please register first.");
     }
-
-    // In a real app, you'd verify the password
     if (credentials.password.length < 6) {
       throw new Error("Invalid credentials");
     }
@@ -83,7 +76,6 @@ export const mockAuthAPI = {
     first_name: string;
     last_name: string;
   }): Promise<AuthResponse> => {
-    // Simulate network delay
     await new Promise((resolve) => setTimeout(resolve, 500));
 
     const existingUser = findUserByEmail(userData.email);
@@ -95,7 +87,12 @@ export const mockAuthAPI = {
       throw new Error("Password must be at least 6 characters long");
     }
 
-    const user = createUser(userData);
+    const user = createUser({
+      email: userData.email,
+      password: userData.password,
+      firstName: userData.first_name,
+      lastName: userData.last_name,
+    });
     const access_token = generateToken();
     const refresh_token = generateToken();
 
@@ -110,8 +107,6 @@ export const mockAuthAPI = {
 
   getProfile: async (): Promise<User> => {
     await new Promise((resolve) => setTimeout(resolve, 300));
-
-    // In a real app, you'd get the user from the token
     const token = localStorage.getItem("access_token");
     if (!token || !mockTokens.has(token)) {
       throw new Error("Unauthorized");

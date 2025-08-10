@@ -18,12 +18,9 @@ const failedTickers = ref<Set<string>>(new Set())
 const stockData = ref<Map<string, any>>(new Map())
 const loadingStates = ref<Map<string, boolean>>(new Map())
 const errorStates = ref<Map<string, string | null>>(new Map())
-
-// Function to get API key at runtime to prevent embedding in build
 const getTwelveDataApiKey = (): string | undefined => {
-  // Only access environment variable if we're in a browser environment
   if (typeof window !== 'undefined') {
-    return import.meta.env.VITE_TWELVE_DATA_API_KEY;
+    return (import.meta as any).env.VITE_TWELVE_DATA_API_KEY;
   }
   return undefined;
 };
@@ -497,24 +494,25 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="bg-white p-6 rounded-lg shadow-md">
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-semibold text-center flex-1">{{ user.displayName || user.fullName || 'Human' }}'s Portfolio</h2>
+  <div class="bg-white p-4 sm:p-6 rounded-lg shadow-md">
+    <div class="flex justify-between items-center mb-4 gap-4">
+      <h2 class="text-lg sm:text-xl font-semibold text-center sm:text-left flex-1 break-words">{{ user.displayName || user.fullName || 'Human' }}'s Portfolio</h2>
       <button 
         @click="handleRefresh"
         :disabled="isRefreshing"
-        class="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        class="flex items-center space-x-2 px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm sm:text-base"
       >
         <svg 
           :class="{ 'animate-spin': isRefreshing }"
-          class="w-4 h-4" 
+          class="hidden sm:block w-4 h-4" 
           fill="none" 
           stroke="currentColor" 
           viewBox="0 0 24 24"
         >
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
         </svg>
-        <span>{{ isRefreshing ? 'Refreshing...' : 'Refresh' }}</span>
+        <span class="hidden sm:inline">{{ isRefreshing ? 'Refreshing...' : 'Refresh' }}</span>
+        <span class="sm:hidden">{{ isRefreshing ? '...' : '↻' }}</span>
       </button>
     </div>
     
@@ -529,7 +527,7 @@ onMounted(async () => {
             @blur="closeDropdown"
             type="text"
             placeholder="Search and click to add stocks, crypto, or forex to your portfolio..."
-            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
           />
           
        
@@ -541,10 +539,10 @@ onMounted(async () => {
               v-for="result in searchResults"
               :key="result.symbol"
               @click="selectStock(result)"
-              class="px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0"
+              class="px-3 sm:px-4 py-2 hover:bg-gray-100 cursor-pointer border-b border-gray-200 last:border-b-0"
             >
-              <div class="font-medium">{{ result.symbol }}</div>
-              <div class="text-sm text-gray-600">{{ result.name }}</div>
+              <div class="font-medium text-sm sm:text-base">{{ result.symbol }}</div>
+              <div class="text-xs sm:text-sm text-gray-600 truncate">{{ result.name }}</div>
             </div>
           </div>
         </div>
@@ -552,32 +550,32 @@ onMounted(async () => {
     </div>
     
 
-    <div class="flex space-x-1 mb-4">
+    <div class="flex flex-wrap gap-1 mb-4">
       <button 
         @click="activePortfolioTab = 'all'"
         :class="activePortfolioTab === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-        class="px-4 py-2 rounded-lg font-medium transition-colors"
+        class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
       >
         All ({{ user.watchlist.length }})
       </button>
       <button 
         @click="activePortfolioTab = 'stocks'"
         :class="activePortfolioTab === 'stocks' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-        class="px-4 py-2 rounded-lg font-medium transition-colors"
+        class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
       >
         Stocks ({{ stocksCount }})
       </button>
       <button 
         @click="activePortfolioTab = 'crypto'"
         :class="activePortfolioTab === 'crypto' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-        class="px-4 py-2 rounded-lg font-medium transition-colors"
+        class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
       >
         Crypto ({{ cryptoCount }})
       </button>
       <button 
         @click="activePortfolioTab = 'forex'"
         :class="activePortfolioTab === 'forex' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'"
-        class="px-4 py-2 rounded-lg font-medium transition-colors"
+        class="px-2 sm:px-4 py-2 rounded-lg font-medium transition-colors text-xs sm:text-sm"
       >
         Forex ({{ forexCount }})
       </button>
@@ -586,8 +584,8 @@ onMounted(async () => {
  
     <div class="space-y-4">
       <div v-if="filteredPortfolio.length === 0" class="text-center py-8 text-gray-500">
-        <p>No assets in your portfolio yet.</p>
-        <p class="text-sm mt-2">Use the search bar above to add stocks, crypto, or forex.</p>
+        <p class="text-sm sm:text-base">No assets in your portfolio yet.</p>
+        <p class="text-xs sm:text-sm mt-2">Use the search bar above to add stocks, crypto, or forex.</p>
       </div>
       
       <div v-else class="space-y-4">
@@ -604,61 +602,65 @@ onMounted(async () => {
 
           
    
-          <div v-else-if="stockData.get(ticker)" class="bg-[#282c34] rounded-lg p-4 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-              <div class="flex items-center space-x-3">
-                <StockLogo :ticker="ticker" />
-                <div class="text-white font-bold text-lg">{{ ticker }}</div>
+          <div v-else-if="stockData.get(ticker)" class="bg-[#282c34] rounded-lg p-3 sm:p-4">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              <div class="flex items-center space-x-2 sm:space-x-4 min-w-0">
+                <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                  <StockLogo :ticker="ticker" />
+                  <div class="text-white font-bold text-base sm:text-lg truncate">{{ ticker }}</div>
+                </div>
+                <div class="flex items-center space-x-1 sm:space-x-2">
+                  <span 
+                    :class="stockData.get(ticker).changePercent >= 0 ? 'text-green-400' : 'text-[#f08080]'"
+                    class="text-xs sm:text-sm font-medium"
+                  >
+                    {{ stockData.get(ticker).changePercent >= 0 ? '↗' : '↘' }} {{ stockData.get(ticker).changePercent.toFixed(2) }}%
+                  </span>
+                  <span 
+                    :class="stockData.get(ticker).changePercent >= 0 ? 'text-green-400' : 'text-[#f08080]'"
+                    class="text-xs sm:text-sm"
+                  >
+                    ({{ stockData.get(ticker).change >= 0 ? '+' : '' }}{{ stockData.get(ticker).change.toFixed(2) }})
+                  </span>
+                </div>
               </div>
-              <div class="flex items-center space-x-2">
-                <span 
-                  :class="stockData.get(ticker).changePercent >= 0 ? 'text-green-400' : 'text-[#f08080]'"
-                  class="text-sm font-medium"
+              
+              <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                <div class="text-white font-bold text-base sm:text-lg">${{ stockData.get(ticker).currentPrice.toFixed(2) }}</div>
+                <div class="text-xs text-gray-400 hidden sm:block">
+                  H: ${{ stockData.get(ticker).high.toFixed(2) }} | L: ${{ stockData.get(ticker).low.toFixed(2) }}
+                </div>
+                <button
+                  @click="removeStock(ticker)"
+                  class="text-red-600 hover:underline text-xs sm:text-sm self-start sm:self-auto"
                 >
-                  {{ stockData.get(ticker).changePercent >= 0 ? '↗' : '↘' }} {{ stockData.get(ticker).changePercent.toFixed(2) }}%
-                </span>
-                <span 
-                  :class="stockData.get(ticker).changePercent >= 0 ? 'text-green-400' : 'text-[#f08080]'"
-                  class="text-sm"
-                >
-                  ({{ stockData.get(ticker).change >= 0 ? '+' : '' }}{{ stockData.get(ticker).change.toFixed(2) }})
-                </span>
+                  Remove
+                </button>
               </div>
-            </div>
-            
-            <div class="flex items-center space-x-4">
-              <div class="text-white font-bold text-lg">${{ stockData.get(ticker).currentPrice.toFixed(2) }}</div>
-              <div class="text-xs text-gray-400">
-                H: ${{ stockData.get(ticker).high.toFixed(2) }} | L: ${{ stockData.get(ticker).low.toFixed(2) }}
-              </div>
-              <button
-                @click="removeStock(ticker)"
-                class="text-red-600 hover:underline text-sm"
-              >
-                Remove
-              </button>
             </div>
           </div>
           
-          <div v-else class="bg-gray-100 rounded-lg p-4 flex justify-between items-center">
-            <div class="flex items-center space-x-4">
-              <div class="flex items-center space-x-3">
-                <StockLogo :ticker="ticker" />
-                <div class="text-gray-700 font-bold text-lg">{{ ticker }}</div>
+          <div v-else class="bg-gray-100 rounded-lg p-3 sm:p-4">
+            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+              <div class="flex items-center space-x-2 sm:space-x-4 min-w-0">
+                <div class="flex items-center space-x-2 sm:space-x-3 min-w-0">
+                  <StockLogo :ticker="ticker" />
+                  <div class="text-gray-700 font-bold text-base sm:text-lg truncate">{{ ticker }}</div>
+                </div>
+                <div class="text-gray-500 text-xs sm:text-sm">
+                  No data available
+                </div>
               </div>
-              <div class="text-gray-500 text-sm">
-                No data available
+              
+              <div class="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+                <div class="text-gray-500 text-xs sm:text-sm">No price data</div>
+                <button
+                  @click="removeStock(ticker)"
+                  class="text-red-600 hover:underline text-xs sm:text-sm self-start sm:self-auto"
+                >
+                  Remove
+                </button>
               </div>
-            </div>
-            
-            <div class="flex items-center space-x-4">
-              <div class="text-gray-500 text-sm">No price data</div>
-              <button
-                @click="removeStock(ticker)"
-                class="text-red-600 hover:underline text-sm"
-              >
-                Remove
-              </button>
             </div>
           </div>
           

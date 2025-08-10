@@ -62,7 +62,7 @@ onUnmounted(() => {
       aria-label="Open menu"
     >
       <svg
-        class="w-6 h-6"
+        class="w-5 h-5 sm:w-6 sm:h-6"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -89,19 +89,19 @@ onUnmounted(() => {
       v-if="isMenuOpen"
       @mouseenter="openMenu"
       @mouseleave="closeMenu"
-      class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
+      class="absolute right-0 mt-2 w-56 sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
       @click.stop
     >
 
-      <div class="p-4 border-b border-gray-200">
-        <div class="flex items-center space-x-3">
-          <div class="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-            <span class="text-white font-semibold text-sm">
+      <div class="p-3 sm:p-4 border-b border-gray-200">
+        <div class="flex items-center space-x-2 sm:space-x-3">
+          <div class="w-8 h-8 sm:w-10 sm:h-10 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <span class="text-white font-semibold text-xs sm:text-sm">
               {{ (user.user?.first_name || 'U').charAt(0).toUpperCase() }}
             </span>
           </div>
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900 truncate">
+            <p class="text-xs sm:text-sm font-medium text-gray-900 truncate">
               {{ (user.user?.first_name || '') + ' ' + (user.user?.last_name || '') || 'User' }}
             </p>
             <p class="text-xs text-gray-500 truncate">
@@ -114,17 +114,17 @@ onUnmounted(() => {
      
       <div class="py-2">
       
-        <div class="px-4 py-2 text-xs text-gray-500">
+        <div class="px-3 sm:px-4 py-2 text-xs text-gray-500">
           Account Information
         </div>
         
      
         <button
           @click="handleLogout"
-          class="w-full px-4 py-3 text-left text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200 flex items-center space-x-3"
+          class="w-full px-3 sm:px-4 py-2 sm:py-3 text-left text-xs sm:text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-200 flex items-center space-x-2 sm:space-x-3"
         >
           <svg
-            class="w-4 h-4"
+            class="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -143,12 +143,12 @@ onUnmounted(() => {
         <div class="border-t border-gray-200 my-2"></div>
 
 
-        <div class="px-4 py-2 text-xs text-red-600 font-medium">
+        <div class="px-3 sm:px-4 py-2 text-xs text-red-600 font-medium">
           Danger Zone
         </div>
 
        
-        <div class="px-4 py-2">
+        <div class="px-3 sm:px-4 py-2">
           <DeleteAccount />
         </div>
       </div>

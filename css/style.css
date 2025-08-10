@@ -1,3 +1,135 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Additional responsive utilities */
+@layer utilities {
+  /* Ensure text doesn't overflow on small screens */
+  .text-responsive {
+    @apply text-xs sm:text-sm md:text-base lg:text-lg;
+  }
+
+  /* Responsive padding */
+  .p-responsive {
+    @apply p-2 sm:p-3 md:p-4 lg:p-6;
+  }
+
+  /* Responsive margins */
+  .m-responsive {
+    @apply m-2 sm:m-3 md:m-4 lg:m-6;
+  }
+
+  /* Ensure proper spacing on mobile */
+  .mobile-spacing {
+    @apply space-y-2 sm:space-y-3 md:space-y-4;
+  }
+
+  /* Prevent horizontal overflow */
+  .no-overflow {
+    @apply overflow-x-hidden;
+  }
+
+  /* Responsive grid columns */
+  .grid-responsive {
+    @apply grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4;
+  }
+
+  /* Responsive flex direction */
+  .flex-responsive {
+    @apply flex-col sm:flex-row;
+  }
+
+  /* Responsive text alignment */
+  .text-responsive-center {
+    @apply text-center sm:text-left lg:text-center;
+  }
+
+  /* Responsive button sizing */
+  .btn-responsive {
+    @apply text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1 sm:py-2 md:py-3;
+  }
+
+  /* Responsive input sizing */
+  .input-responsive {
+    @apply text-xs sm:text-sm md:text-base px-2 sm:px-3 md:px-4 py-1 sm:py-2 md:py-3;
+  }
+}
+
+/* Ensure proper viewport handling */
+html,
+body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Responsive container */
+.container-responsive {
+  @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+/* Mobile-first responsive breakpoints */
+@media (max-width: 640px) {
+  .mobile-hidden {
+    display: none;
+  }
+
+  .mobile-full {
+    width: 100%;
+  }
+
+  .mobile-text-sm {
+    font-size: 0.875rem;
+  }
+
+  .mobile-text-xs {
+    font-size: 0.75rem;
+  }
+}
+
+/* Tablet responsive adjustments */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .tablet-padding {
+    padding: 1rem;
+  }
+
+  .tablet-text-base {
+    font-size: 1rem;
+  }
+}
+
+/* Desktop responsive adjustments */
+@media (min-width: 1025px) {
+  .desktop-padding {
+    padding: 1.5rem;
+  }
+
+  .desktop-text-lg {
+    font-size: 1.125rem;
+  }
+}
+
+/* Ensure proper touch targets on mobile */
+@media (max-width: 768px) {
+  button,
+  a,
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .touch-target {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Prevent zoom on input focus on iOS */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+}

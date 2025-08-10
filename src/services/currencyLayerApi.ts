@@ -1,8 +1,5 @@
 import axios from "axios";
-
-// Function to get API key at runtime to prevent embedding in build
 const getCurrencyLayerApiKey = (): string | undefined => {
-  // Only access environment variable if we're in a browser environment
   if (typeof window !== 'undefined') {
     return import.meta.env.VITE_CURRENCY_LAYER_API_KEY;
   }

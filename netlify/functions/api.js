@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const fetch = require("node-fetch");
 
-// Initialize database connection
 let sql;
 try {
   const databaseUrl = process.env.DATABASE_URL;
@@ -12,16 +11,16 @@ try {
   throw error;
 }
 
-// JWT configuration
+
 const JWT_SECRET = process.env.JWT_SECRET_KEY || "your-jwt-secret-key";
 const JWT_EXPIRES_IN = "7d";
 
-// Helper function to create JWT token
+
 function createToken(userId) {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
 
-// Helper function to verify JWT token
+
 function verifyToken(token) {
   try {
     return jwt.verify(token, JWT_SECRET);
@@ -30,17 +29,17 @@ function verifyToken(token) {
   }
 }
 
-// Helper function to hash password
+
 async function hashPassword(password) {
   return await bcrypt.hash(password, 10);
 }
 
-// Helper function to compare password
+
 async function comparePassword(password, hashedPassword) {
   return await bcrypt.compare(password, hashedPassword);
 }
 
-// Initialize database tables
+
 async function initializeDatabase() {
   try {
     await sql`
@@ -56,28 +55,28 @@ async function initializeDatabase() {
       )
     `;
 
-    // Add watchlist column if it doesn't exist (migration)
+
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS watchlist TEXT[]`;
     } catch (migrationError) {
-      // Column already exists
+
     }
 
-    // Update first_name and last_name columns to allow NULL (migration)
+
     try {
       await sql`ALTER TABLE users ALTER COLUMN first_name DROP NOT NULL`;
       await sql`ALTER TABLE users ALTER COLUMN last_name DROP NOT NULL`;
     } catch (migrationError) {
-      // Columns already allow NULL
+
     }
   } catch (error) {
     throw error;
   }
 }
 
-// Main handler function
+
 exports.handler = async (event, context) => {
-  // Enable CORS
+
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
@@ -85,7 +84,7 @@ exports.handler = async (event, context) => {
     "Content-Type": "application/json",
   };
 
-  // Handle preflight requests
+
   if (event.httpMethod === "OPTIONS") {
     return {
       statusCode: 200,
@@ -95,19 +94,16 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Initialize database
     await initializeDatabase();
 
     const path = event.path.replace("/.netlify/functions/api", "");
     const method = event.httpMethod;
 
-    // Parse request body
     let body = {};
     if (event.body) {
       try {
         body = JSON.parse(event.body);
       } catch (error) {
-        // Error parsing request body
       }
     }
 
@@ -122,7 +118,6 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // Authentication routes
     if (path === "/auth/register" && method === "POST") {
       const { email, password, firstName, lastName } = body;
 
@@ -167,12 +162,11 @@ exports.handler = async (event, context) => {
               watchlist: [],
             },
             access_token: token,
-            refresh_token: token, // For simplicity, using same token as refresh
+            refresh_token: token,
           }),
         };
       } catch (error) {
         if (error.code === "23505") {
-          // Unique constraint violation
           return {
             statusCode: 400,
             headers,
@@ -254,7 +248,7 @@ exports.handler = async (event, context) => {
               is_active: true,
             },
             access_token: token,
-            refresh_token: token, // For simplicity, using same token as refresh
+            refresh_token: token,
           }),
         };
       } catch (error) {
@@ -262,7 +256,6 @@ exports.handler = async (event, context) => {
       }
     }
 
-    // Protected routes - require authentication
     const authHeader =
       event.headers.authorization || event.headers.Authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -290,7 +283,6 @@ exports.handler = async (event, context) => {
       };
     }
 
-    // User-specific routes
     if (path === "/user/profile" && method === "GET") {
       try {
         const result = await sql`
@@ -391,7 +383,6 @@ exports.handler = async (event, context) => {
       }
     }
 
-    // Chatbot routes
     if (path === "/ai_chatbot" && method === "POST") {
       const { question } = body;
 
@@ -406,7 +397,6 @@ exports.handler = async (event, context) => {
         };
       }
 
-      // Get user context
       const userResult = await sql`
         SELECT first_name, last_name, watchlist
         FROM users WHERE id = ${decoded.userId}
@@ -415,11 +405,9 @@ exports.handler = async (event, context) => {
       const user = userResult[0];
 
       try {
-        // Check if OpenAI API key is available
         const openaiApiKey = process.env.OPENAI_API_KEY;
 
         if (!openaiApiKey) {
-          // Fallback to basic response if no API key
           return {
             statusCode: 200,
             headers,
@@ -435,7 +423,7 @@ exports.handler = async (event, context) => {
           };
         }
 
-        // Use OpenAI API for general financial questions
+
         const systemPrompt = `You are an expert financial analyst and AI assistant specializing in stock and cryptocurrency analysis. 
 You have access to real-time market data and can provide comprehensive investment insights.
 
@@ -495,7 +483,6 @@ Provide personalized, helpful financial analysis based on the user's question. I
           }),
         };
       } catch (error) {
-        // Fallback response on error
         return {
           statusCode: 200,
           headers,
@@ -512,7 +499,6 @@ Provide personalized, helpful financial analysis based on the user's question. I
       }
     }
 
-    // Stock data routes
     if (path === "/available-assets" && method === "GET") {
       const assets = [
         "AAPL",
@@ -579,7 +565,6 @@ Provide personalized, helpful financial analysis based on the user's question. I
       };
     }
 
-    // Account management routes
     if (path === "/account/delete" && method === "DELETE") {
       try {
         await sql`
@@ -599,7 +584,6 @@ Provide personalized, helpful financial analysis based on the user's question. I
       }
     }
 
-    // Default response for unmatched routes
     return {
       statusCode: 404,
       headers,

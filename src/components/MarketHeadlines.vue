@@ -24,23 +24,23 @@ onMounted(async () => {
 <template>
   <div class="w-full bg-black overflow-hidden whitespace-nowrap border-t border-b border-gray-700">
     
-    <div v-if="loading || news.length === 0" class="text-white text-sm py-2">
+    <div v-if="loading || news.length === 0" class="text-white text-xs sm:text-sm py-1 sm:py-2">
       <div class="animate-marquee-fast inline-block">
         <span
           v-for="i in 20"
           :key="i"
-          class="mx-12 inline-block"
+          class="mx-4 sm:mx-12 inline-block"
         >
           Current news unavailable at this time
         </span>
       </div>
     </div>
-    <div v-else class="text-white text-sm py-2">
+    <div v-else class="text-white text-xs sm:text-sm py-1 sm:py-2">
       <div class="animate-marquee inline-block">
         <span
           v-for="(headline, index) in news"
           :key="index"
-          class="mx-12 inline-block"
+          class="mx-4 sm:mx-12 inline-block"
         >
           {{ headline }}
         </span>
@@ -48,7 +48,7 @@ onMounted(async () => {
         <span
           v-for="(headline, index) in news"
           :key="'duplicate-' + index"
-          class="mx-12 inline-block"
+          class="mx-4 sm:mx-12 inline-block"
         >
           {{ headline }}
         </span>

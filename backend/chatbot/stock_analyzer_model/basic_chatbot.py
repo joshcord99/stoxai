@@ -430,10 +430,10 @@ class BasicChatbot:
             'should i invest in', 'analyze', 'compare', 'which one'
         ]
         
-        # Check if question contains multiple stock keywords
+        
         has_multiple_keywords = any(keyword in q_lower for keyword in multiple_stock_keywords)
         
-        # Check if user has multiple stocks in watchlist
+        
         user_info = self._extract_user_info(question)
         has_multiple_stocks = False
         if user_info and user_info.get('watchlist'):
@@ -458,11 +458,11 @@ class BasicChatbot:
         watchlist_items = [item.strip() for item in watchlist_text.split(',')]
         
         if len(watchlist_items) == 1:
-            # Only one stock in watchlist
+            
             symbol = watchlist_items[0]
             return f"I can see you have {symbol} in your watchlist. Let me analyze it for you:\n\n" + self._analyze_single_stock(symbol)
         
-        # Multiple stocks - provide comparison
+                
         analysis_parts = []
         for symbol in watchlist_items:
             try:

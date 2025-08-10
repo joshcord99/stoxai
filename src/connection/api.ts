@@ -1,4 +1,5 @@
-import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
+import axios from "axios";
+import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import { mockAuthAPI } from "./mockAuth";
 
 declare module "axios" {
@@ -19,9 +20,14 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const token = typeof localStorage !== "undefined" ? localStorage.getItem("access_token") : null;
+    const token =
+      typeof localStorage !== "undefined"
+        ? localStorage.getItem("access_token")
+        : null;
     if (!config.headers) config.headers = {};
-    if (token) (config.headers as Record<string, string>).Authorization = `Bearer ${token}`;
+    if (token)
+      (config.headers as Record<string, string>).Authorization =
+        `Bearer ${token}`;
     return config;
   },
   (error) => Promise.reject(error)
@@ -36,7 +42,10 @@ api.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = typeof localStorage !== "undefined" ? localStorage.getItem("refresh_token") : null;
+        const refreshToken =
+          typeof localStorage !== "undefined"
+            ? localStorage.getItem("refresh_token")
+            : null;
         if (refreshToken) {
           const refreshUrl = BACKEND_URL
             ? `${BACKEND_URL}/api/auth/refresh`
@@ -86,7 +95,13 @@ export const authAPI = {
     firstName: string;
     lastName: string;
   }) => {
-    if (USE_MOCK_AUTH) return await mockAuthAPI.register(userData);
+    if (USE_MOCK_AUTH)
+      return await mockAuthAPI.register({
+        email: userData.email,
+        password: userData.password,
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+      });
     const { data } = await api.post("/auth/register", {
       email: userData.email,
       password: userData.password,
@@ -110,18 +125,21 @@ export const authAPI = {
 
   logout: async () => {
     if (USE_MOCK_AUTH) return await mockAuthAPI.logout();
-    if (typeof localStorage !== "undefined") localStorage.removeItem("access_token");
+    if (typeof localStorage !== "undefined")
+      localStorage.removeItem("access_token");
     return { message: "Logged out successfully" };
   },
 
   getWatchlist: async () => {
-    if (USE_MOCK_AUTH) return { watchlist: (await mockAuthAPI.getWatchlist()) ?? [] };
+    if (USE_MOCK_AUTH)
+      return { watchlist: (await mockAuthAPI.getWatchlist()) ?? [] };
     const { data } = await api.get("/user/profile");
     return { watchlist: data.user?.watchlist ?? [] };
   },
 
   updateWatchlist: async (watchlist: string[]) => {
-    if (USE_MOCK_AUTH) return await (mockAuthAPI as any).updateWatchlist?.(watchlist);
+    if (USE_MOCK_AUTH)
+      return await (mockAuthAPI as any).updateWatchlist?.(watchlist);
     const { data } = await api.put("/user/watchlist", { watchlist });
     return data;
   },
@@ -131,7 +149,9 @@ export const authAPI = {
     const { data: current } = await api.get("/user/profile");
     const currentWatchlist: string[] = current.user?.watchlist ?? [];
     const newWatchlist = Array.from(new Set([...currentWatchlist, ticker]));
-    const { data } = await api.put("/user/watchlist", { watchlist: newWatchlist });
+    const { data } = await api.put("/user/watchlist", {
+      watchlist: newWatchlist,
+    });
     return data;
   },
 
@@ -140,7 +160,9 @@ export const authAPI = {
     const { data: current } = await api.get("/user/profile");
     const currentWatchlist: string[] = current.user?.watchlist ?? [];
     const newWatchlist = currentWatchlist.filter((t: string) => t !== ticker);
-    const { data } = await api.put("/user/watchlist", { watchlist: newWatchlist });
+    const { data } = await api.put("/user/watchlist", {
+      watchlist: newWatchlist,
+    });
     return data;
   },
 
@@ -151,7 +173,11 @@ export const authAPI = {
   },
 
   exportAccountData: async () => {
-    if (USE_MOCK_AUTH) return { user: await mockAuthAPI.getProfile(), exportData: "Mock export data" };
+    if (USE_MOCK_AUTH)
+      return {
+        user: await mockAuthAPI.getProfile(),
+        exportData: "Mock export data",
+      };
     const { data } = await api.get("/user/profile");
     return { user: data.user, exportData: "Account data export" };
   },

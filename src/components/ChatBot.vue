@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import axios from 'axios'
 import { marked } from 'marked'
 import { useUserStore } from '../userInfo'
@@ -14,6 +14,19 @@ const messages = ref<Message[]>([])
 const input = ref('')
 const isLoading = ref(false)
 const userStore = useUserStore()
+const chatContainer = ref<HTMLElement>()
+
+const scrollToBottom = () => {
+  nextTick(() => {
+    if (chatContainer.value) {
+      chatContainer.value.scrollTop = chatContainer.value.scrollHeight
+    }
+  })
+}
+
+watch(messages, () => {
+  scrollToBottom()
+}, { deep: true })
 
 onMounted(() => {
   const userName =
@@ -183,10 +196,10 @@ getAvailableAssets()
 </script>
 
 <template>
-  <div class="bg-white shadow-lg p-4 rounded-lg max-w-2xl mx-auto mt-[-15px]">
-            <h2 class="text-xl font-bold mb-4 text-center">Stock & Crypto Chat Assistant</h2>
+  <div class="bg-white shadow-lg p-3 sm:p-4 rounded-lg w-full">
+    <h2 class="text-lg sm:text-xl font-bold mb-4 text-center">Stock & Crypto Chat Assistant</h2>
 
-    <div class="h-64 overflow-y-auto border p-3 mb-4 bg-gray-50 rounded">
+    <div ref="chatContainer" class="h-48 sm:h-64 overflow-y-auto border p-2 sm:p-3 mb-4 bg-gray-50 rounded">
       <div
         v-for="(msg, index) in messages"
         :key="index"
@@ -197,16 +210,16 @@ getAvailableAssets()
         class="mb-2"
       >
         <div
-          class="inline-block px-3 py-2 rounded-lg shadow text-sm"
+          class="inline-block px-2 sm:px-3 py-1 sm:py-2 rounded-lg shadow text-xs sm:text-sm max-w-full"
           :class="{
             'bg-blue-100': msg.sender === 'user',
             'bg-gray-200': msg.sender === 'bot',
             'bg-yellow-100 animate-pulse': msg.loading
           }"
         >
-          <span v-if="msg.loading" class="inline-block animate-spin mr-2">⏳</span>
-          <div v-if="msg.sender === 'bot'" v-html="renderMarkdown(msg.text)" class="prose prose-sm max-w-none"></div>
-          <div v-else>{{ msg.text }}</div>
+          <span v-if="msg.loading" class="inline-block animate-spin mr-1 sm:mr-2">⏳</span>
+          <div v-if="msg.sender === 'bot'" v-html="renderMarkdown(msg.text)" class="prose prose-xs sm:prose-sm max-w-none break-words"></div>
+          <div v-else class="break-words">{{ msg.text }}</div>
         </div>
       </div>
     </div>
@@ -216,14 +229,14 @@ getAvailableAssets()
         v-model="input"
         @keydown.enter="sendMessage"
         type="text"
-        placeholder="Ask about stocks or crypto (e.g., 'Should I invest in Bitcoin?')"
-        class="flex-1 px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500"
+        placeholder="Ask about stocks or crypto..."
+        class="flex-1 px-2 sm:px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
         :disabled="isLoading"
       />
       <button
         @click="sendMessage"
         :disabled="isLoading"
-        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+        class="bg-blue-600 text-white px-3 sm:px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400 text-sm sm:text-base whitespace-nowrap"
       >
         {{ isLoading ? 'Analyzing...' : 'Send' }}
       </button>

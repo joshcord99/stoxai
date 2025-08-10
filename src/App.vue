@@ -2,7 +2,6 @@
 import { onMounted } from 'vue';
 import { useUserStore } from './userInfo';
 import Footer from './components/Footer.vue';
-import HealthCheck from './components/HealthCheck.vue';
 
 const userStore = useUserStore();
 
@@ -17,7 +16,6 @@ onMounted(() => {
       <router-view />
     </main>
     <Footer />
-    <HealthCheck />
   </div>
 </template>
 
