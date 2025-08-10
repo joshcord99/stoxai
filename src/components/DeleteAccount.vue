@@ -96,7 +96,6 @@ const openDeleteModal = () => {
 };
 
 const closeDeleteModal = () => {
-  console.log("closeDeleteModal called");
   showDeleteModal.value = false;
   deleteForm.confirmEmail = "";
   deleteForm.confirmText = "";
@@ -132,16 +131,14 @@ const closeDeleteModal = () => {
       @click="closeDeleteModal"
     >
       <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4" @click.stop>
-        <div class="flex items-center justify-between mb-4 relative">
+        <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold text-gray-900">Delete Account</h3>
           <button
-            @click.stop="closeDeleteModal"
-            class="relative z-10 p-4 -m-4 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors duration-200 touch-manipulation min-w-[48px] min-h-[48px] flex items-center justify-center border border-gray-200 bg-white"
-            aria-label="Close modal"
-            type="button"
+            @click="closeDeleteModal"
+            class="text-gray-400 hover:text-gray-600"
           >
             <svg
-              class="w-6 h-6 pointer-events-none"
+              class="w-6 h-6"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
