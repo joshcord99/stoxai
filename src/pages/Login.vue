@@ -11,8 +11,8 @@
     
     <div class="flex flex-col lg:flex-row w-full max-w-6xl gap-4 sm:gap-8 mt-16 sm:mt-20">
       <div class="w-full lg:w-1/2 bg-white p-4 sm:p-6 lg:p-8 rounded-lg shadow-md">
-        <h3 class="text-xl sm:text-2xl lg:text-3xl font-medium text-center mb-2 text-gray-600">Welcome Back</h3>
-        <h2 class="text-lg sm:text-xl lg:text-2xl font-semibold text-center mb-4 sm:mb-6 text-gray-800">Login to Stock Analyst</h2>
+        <h3 class="text-xl sm:text-2xl lg:text-3xl font-medium text-center mb-2 text-gray-600">Welcome</h3>
+        <h2 class="text-lg sm:text-xl lg:text-2xl font-semibold text-center mb-4 sm:mb-6 text-gray-800">Login</h2>
         
 
         <div v-if="error" class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded text-sm">
