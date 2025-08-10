@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref, onMounted, nextTick, watch } from 'vue'
-import axios from 'axios'
 import { marked } from 'marked'
 import { useUserStore } from '../userInfo'
+import api from '../connection/api'
 
 interface Message {
   text: string
@@ -126,33 +126,40 @@ const sendMessage = async () => {
       questionLower.includes(k)
     )
 
-    let data: { success: boolean; response?: string } = { success: false }
+    let data: { success: boolean; response?: string; technical_data?: any; analysis_type?: string; symbol?: string } = { success: false }
     const authHeaders = userStore.token
       ? { Authorization: `Bearer ${userStore.token}` }
       : {}
 
     if ((isStockQuestion && detectedSymbol) || (hasInvestmentKeywords && detectedSymbol)) {
-      const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5003'
       try {
-        const res = await axios.post(
-          `${BACKEND_URL}/api/stock-analysis`,
-          { symbol: detectedSymbol, question: userQuestion },
-          { headers: authHeaders }
+        // Get conversation context for better analysis
+        const conversationContext = messages.value
+          .filter(msg => msg.sender === 'user' && !msg.loading)
+          .slice(-5) // Last 5 user messages for context
+          .map(msg => msg.text)
+          .join(' | ')
+
+        const res = await api.post(
+          '/stock-analysis',
+          { 
+            symbol: detectedSymbol, 
+            question: userQuestion,
+            conversation_context: conversationContext
+          }
         )
         data = res.data
       } catch {
-        const res = await axios.post(
-          '/.netlify/functions/api/ai_chatbot',
-          { question: userQuestion },
-          { headers: authHeaders }
+        const res = await api.post(
+          '/ai_chatbot',
+          { question: userQuestion }
         )
         data = res.data
       }
     } else {
-      const res = await axios.post(
-        '/.netlify/functions/api/ai_chatbot',
-        { question: userQuestion },
-        { headers: authHeaders }
+      const res = await api.post(
+        '/ai_chatbot',
+        { question: userQuestion }
       )
       data = res.data
     }
@@ -160,7 +167,13 @@ const sendMessage = async () => {
     messages.value.pop()
 
     if (data.success && data.response) {
-      messages.value.push({ text: data.response, sender: 'bot' })
+      // If we have technical data from stock analyzer, enhance the response
+      if (data.technical_data && data.analysis_type === 'stock_analysis') {
+        const enhancedResponse = enhanceStockResponse(data.response, data.technical_data, data.symbol || 'Unknown')
+        messages.value.push({ text: enhancedResponse, sender: 'bot' })
+      } else {
+        messages.value.push({ text: data.response, sender: 'bot' })
+      }
     } else {
       messages.value.push({
         text: "Sorry, I couldn't analyze your question right now.",
@@ -178,6 +191,84 @@ const sendMessage = async () => {
   } finally {
     isLoading.value = false
   }
+}
+
+const enhanceStockResponse = (baseResponse: string, technicalData: any, symbol: string) => {
+  let enhancedResponse = baseResponse
+
+  // Add technical insights if available
+  if (technicalData) {
+    enhancedResponse += '\n\n**Technical Insights:**\n'
+    
+    if (technicalData.current_price) {
+      enhancedResponse += `• Current Price: $${technicalData.current_price}\n`
+    }
+    
+    if (technicalData.trend) {
+      enhancedResponse += `• Trend: ${technicalData.trend}\n`
+    }
+    
+    if (technicalData.recommendation) {
+      enhancedResponse += `• Recommendation: ${technicalData.recommendation}\n`
+    }
+    
+    if (technicalData.risk_score) {
+      enhancedResponse += `• Risk Score: ${technicalData.risk_score}/10\n`
+    }
+  }
+
+  // Add contextual advice based on the conversation
+  const recentMessages = messages.value
+    .filter(msg => msg.sender === 'user' && !msg.loading)
+    .slice(-3)
+    .map(msg => msg.text.toLowerCase())
+
+  const hasAskedAboutTrend = recentMessages.some(msg => 
+    msg.includes('trend') || msg.includes('going') || msg.includes('direction')
+  )
+  
+  const hasAskedAboutRisk = recentMessages.some(msg => 
+    msg.includes('risk') || msg.includes('safe') || msg.includes('dangerous')
+  )
+  
+  const hasAskedAboutInvestment = recentMessages.some(msg => 
+    msg.includes('buy') || msg.includes('sell') || msg.includes('invest')
+  )
+
+  if (hasAskedAboutTrend && technicalData?.trend) {
+    enhancedResponse += '\n**Trend Analysis:** Based on your interest in trends, '
+    if (technicalData.trend.includes('UP')) {
+      enhancedResponse += `${symbol || 'this stock'} is showing positive momentum. Consider this in your investment strategy.`
+    } else if (technicalData.trend.includes('DOWN')) {
+      enhancedResponse += `${symbol || 'this stock'} is showing negative momentum. Exercise caution and consider waiting for a reversal.`
+    } else {
+      enhancedResponse += `${symbol || 'this stock'} is moving sideways. This might be a good time to accumulate or wait for a breakout.`
+    }
+  }
+
+  if (hasAskedAboutRisk && technicalData?.risk_score) {
+    enhancedResponse += '\n**Risk Context:** '
+    if (technicalData.risk_score <= 3) {
+      enhancedResponse += 'This appears to be a relatively low-risk investment opportunity.'
+    } else if (technicalData.risk_score <= 6) {
+      enhancedResponse += 'This investment carries moderate risk. Consider your risk tolerance.'
+    } else {
+      enhancedResponse += 'This is a high-risk investment. Only invest what you can afford to lose.'
+    }
+  }
+
+  if (hasAskedAboutInvestment && technicalData?.recommendation) {
+    enhancedResponse += '\n**Investment Context:** '
+    if (technicalData.recommendation.includes('BUY')) {
+      enhancedResponse += 'The technical analysis suggests this could be a good entry point.'
+    } else if (technicalData.recommendation.includes('SELL')) {
+      enhancedResponse += 'Consider taking profits or waiting for better entry conditions.'
+    } else {
+      enhancedResponse += 'The signals are mixed. Consider waiting for clearer direction.'
+    }
+  }
+
+  return enhancedResponse
 }
 
 const getAvailableAssets = async () => {

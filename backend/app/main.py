@@ -39,21 +39,47 @@ def create_app(config_class=Config):
     
     @app.route('/api/ai_chatbot', methods=['POST'])
     def ai_chatbot():
-        """Proxy to AI chatbot service"""
+        """Handle AI chatbot requests with OpenAI"""
         try:
-        
-            response = requests.post(
-                'http://localhost:5002/api/ai_chatbot',
-                json=request.get_json(),
-                timeout=30
-            )
-            return response.json(), response.status_code
-        except requests.exceptions.RequestException as e:
+            data = request.get_json()
+            question = data.get('question', '')
+            
+            if not question:
+                return jsonify({'success': False, 'error': 'Question is required'}), 400
+            
+            # Import and use the actual AI chatbot
+            sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'chatbot'))
+            from chat_gpt_model.ai_chatbot import AIChatbot
+            
+            print(f"AI chatbot request: {question}")
+            
+            # Initialize AI chatbot with OpenAI API key
+            ai_chatbot = AIChatbot()
+            
+            if not ai_chatbot.use_openai:
+                return jsonify({
+                    'success': False,
+                    'error': 'OpenAI API key not configured',
+                    'message': 'Please check your OPENAI_API_KEY in the .env file'
+                }), 500
+            
+            # Get AI response
+            response = ai_chatbot.process_question(question)
+            print(f"AI response: {response}")
+            
+            return jsonify({
+                'success': True,
+                'response': response,
+                'analysis_type': 'ai_chat'
+            }), 200
+            
+        except Exception as e:
+            print(f"AI chatbot error: {e}")
             return jsonify({
                 'success': False, 
-                'error': 'AI chatbot service unavailable',
-                'message': 'Please ensure the AI chatbot service is running on port 5002'
-            }), 503
+                'error': 'AI chatbot service error',
+                'message': str(e)
+            }), 500
     
     @app.route('/api/stock-analysis', methods=['POST'])
     def stock_analysis():
@@ -61,6 +87,7 @@ def create_app(config_class=Config):
             data = request.get_json()
             symbol = data.get('symbol', '')
             question = data.get('question', '')
+            conversation_context = data.get('conversation_context', '')
             
             if not symbol or not question:
                 return jsonify({'success': False, 'error': 'Symbol and question are required'}), 400
@@ -71,6 +98,8 @@ def create_app(config_class=Config):
             
             print(f"Stock analysis requested for symbol: {symbol}")
             print(f"Question: {question}")
+            if conversation_context:
+                print(f"Conversation context: {conversation_context}")
             
             analyzer = StockAnalyzer()
             print("StockAnalyzer instance created successfully")
@@ -81,13 +110,18 @@ def create_app(config_class=Config):
             
             if advice and not advice.get('error'):
 
+                # Enhanced question type detection using conversation context
                 question_type = "general"
-                if 'trend' in question.lower() or 'going' in question.lower():
+                combined_text = f"{question} {conversation_context}".lower()
+                
+                if 'trend' in combined_text or 'going' in combined_text or 'direction' in combined_text:
                     question_type = "trend_analysis"
-                elif any(word in question.lower() for word in ['buy', 'sell', 'hold', 'invest', 'investment']):
+                elif any(word in combined_text for word in ['buy', 'sell', 'hold', 'invest', 'investment', 'purchase']):
                     question_type = "should_i_buy"
-                elif any(word in question.lower() for word in ['risk', 'safe', 'dangerous']):
+                elif any(word in combined_text for word in ['risk', 'safe', 'dangerous', 'volatile']):
                     question_type = "risk_assessment"
+                elif any(word in combined_text for word in ['price', 'value', 'worth', 'expensive', 'cheap']):
+                    question_type = "price_analysis"
                 
                 print(f"Question type detected: {question_type}")
                 
@@ -95,16 +129,31 @@ def create_app(config_class=Config):
                 response = analyzer.get_investment_insight(symbol, question_type)
                 print(f"Response generated: {response}")
                 
+                # Add contextual information based on conversation history
+                contextual_info = ""
+                if conversation_context:
+                    context_lower = conversation_context.lower()
+                    if any(word in context_lower for word in ['previous', 'earlier', 'before']):
+                        contextual_info = "\n\n**Context Note:** I see you've asked about this stock before. The analysis above reflects current market conditions and may differ from previous assessments."
+                    if any(word in context_lower for word in ['compare', 'versus', 'vs', 'better']):
+                        contextual_info = "\n\n**Comparison Note:** If you're comparing investments, consider factors like risk tolerance, time horizon, and portfolio diversification."
+                
+                final_response = response + contextual_info
+                
                 return jsonify({
                     'success': True,
-                    'response': response,
+                    'response': final_response,
                     'analysis_type': 'stock_analysis',
                     'symbol': symbol,
                     'technical_data': {
                         'current_price': advice.get('current_price'),
                         'trend': advice.get('trend'),
                         'recommendation': advice.get('recommendation'),
-                        'risk_score': advice.get('risk_score')
+                        'risk_score': advice.get('risk_score'),
+                        'volatility': advice.get('volatility'),
+                        'support': advice.get('support'),
+                        'resistance': advice.get('resistance'),
+                        'price_change_pct': advice.get('price_change_pct')
                     }
                 })
             else:

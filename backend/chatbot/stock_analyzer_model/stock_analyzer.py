@@ -311,6 +311,8 @@ class StockAnalyzer:
             return self._format_trend_analysis(advice)
         elif question_type == "risk_assessment":
             return self._format_risk_assessment(advice)
+        elif question_type == "price_analysis":
+            return self._format_price_analysis(advice)
         else:
             return self._format_general_advice(advice)
     
@@ -396,5 +398,41 @@ class StockAnalyzer:
     def _format_general_advice(self, advice):
         """Format general investment advice"""
         return self._format_buy_advice(advice)
+
+    def _format_price_analysis(self, advice):
+        """Format price analysis and valuation insights"""
+        symbol = advice['symbol']
+        current_price = advice['current_price']
+        price_change_pct = advice['price_change_pct']
+        support = advice['support']
+        resistance = advice['resistance']
+        volatility = advice['volatility']
+        
+        response = f"Price Analysis for {symbol}:\n\n"
+        response += f"Current Price: ${current_price:.2f}\n"
+        response += f"Recent Change: {price_change_pct:+.2f}%\n"
+        response += f"Support Level: ${support:.2f}\n"
+        response += f"Resistance Level: ${resistance:.2f}\n"
+        response += f"Volatility: {volatility:.1f}%\n\n"
+        
+        # Price position analysis
+        price_position = (current_price - support) / (resistance - support) if resistance > support else 0.5
+        
+        if price_position < 0.3:
+            response += "The stock is trading near support levels, which could indicate a potential buying opportunity."
+        elif price_position > 0.7:
+            response += "The stock is trading near resistance levels, which could indicate a potential selling opportunity."
+        else:
+            response += "The stock is trading in the middle range between support and resistance levels."
+        
+        # Volatility assessment
+        if volatility > 20:
+            response += " High volatility suggests significant price swings are possible."
+        elif volatility < 10:
+            response += " Low volatility suggests relatively stable price movements."
+        else:
+            response += " Moderate volatility indicates balanced risk and opportunity."
+        
+        return response
 
  
