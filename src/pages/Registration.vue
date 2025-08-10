@@ -17,11 +17,11 @@
       <form @submit.prevent="submitRegister">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4">
           <div>
-            <label class="block text-gray-700 mb-1 text-sm sm:text-base" for="firstName">First Name</label>
+            <label class="block text-gray-700 mb-1 text-sm sm:text-base" for="first_name">First Name</label>
             <input
-              v-model="form.firstName"
+              v-model="form.first_name"
               type="text"
-              id="firstName"
+              id="first_name"
               required
               :disabled="loading"
               class="w-full px-3 sm:px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 text-sm sm:text-base"
@@ -30,11 +30,11 @@
           </div>
 
           <div>
-            <label class="block text-gray-700 mb-1 text-sm sm:text-base" for="lastName">Last Name</label>
+            <label class="block text-gray-700 mb-1 text-sm sm:text-base" for="last_name">Last Name</label>
             <input
-              v-model="form.lastName"
+              v-model="form.last_name"
               type="text"
-              id="lastName"
+              id="last_name"
               required
               :disabled="loading"
               class="w-full px-3 sm:px-4 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100 text-sm sm:text-base"
@@ -215,8 +215,8 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const form = reactive({
-  firstName: '',
-  lastName: '',
+  first_name: '',
+  last_name: '',
   email: '',
   password: '',
   confirmPassword: '',
@@ -247,12 +247,12 @@ const validateForm = () => {
     return false;
   }
 
-  if (form.firstName.trim().length < 1) {
+  if (form.first_name.trim().length < 1) {
     error.value = 'First name is required.';
     return false;
   }
 
-  if (form.lastName.trim().length < 1) {
+  if (form.last_name.trim().length < 1) {
     error.value = 'Last name is required.';
     return false;
   }
@@ -276,8 +276,8 @@ const submitRegister = async () => {
     await userStore.register({
       email: form.email,
       password: form.password,
-      firstName: form.firstName,
-      lastName: form.lastName,
+      first_name: form.first_name,
+      last_name: form.last_name,
     });
 
     success.value = 'Account created successfully! Redirecting to dashboard...';

@@ -11,15 +11,12 @@ try {
   throw error;
 }
 
-
 const JWT_SECRET = process.env.JWT_SECRET_KEY || "your-jwt-secret-key";
 const JWT_EXPIRES_IN = "7d";
-
 
 function createToken(userId) {
   return jwt.sign({ userId }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
-
 
 function verifyToken(token) {
   try {
@@ -29,16 +26,13 @@ function verifyToken(token) {
   }
 }
 
-
 async function hashPassword(password) {
   return await bcrypt.hash(password, 10);
 }
 
-
 async function comparePassword(password, hashedPassword) {
   return await bcrypt.compare(password, hashedPassword);
 }
-
 
 async function initializeDatabase() {
   try {
@@ -55,35 +49,26 @@ async function initializeDatabase() {
       )
     `;
 
-
     try {
       await sql`ALTER TABLE users ADD COLUMN IF NOT EXISTS watchlist TEXT[]`;
-    } catch (migrationError) {
-
-    }
-
+    } catch (migrationError) {}
 
     try {
       await sql`ALTER TABLE users ALTER COLUMN first_name DROP NOT NULL`;
       await sql`ALTER TABLE users ALTER COLUMN last_name DROP NOT NULL`;
-    } catch (migrationError) {
-
-    }
+    } catch (migrationError) {}
   } catch (error) {
     throw error;
   }
 }
 
-
 exports.handler = async (event, context) => {
-
   const headers = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
     "Content-Type": "application/json",
   };
-
 
   if (event.httpMethod === "OPTIONS") {
     return {
@@ -103,8 +88,7 @@ exports.handler = async (event, context) => {
     if (event.body) {
       try {
         body = JSON.parse(event.body);
-      } catch (error) {
-      }
+      } catch (error) {}
     }
 
     if (path === "/health" && method === "GET") {
@@ -119,7 +103,7 @@ exports.handler = async (event, context) => {
     }
 
     if (path === "/auth/register" && method === "POST") {
-      const { email, password, firstName, lastName } = body;
+      const { email, password, first_name, last_name } = body;
 
       if (!email || !password) {
         return {
@@ -137,7 +121,7 @@ exports.handler = async (event, context) => {
 
         const result = await sql`
           INSERT INTO users (email, password_hash, first_name, last_name, created_at, updated_at)
-          VALUES (${email}, ${hashedPassword}, ${firstName || null}, ${lastName || null}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
+          VALUES (${email}, ${hashedPassword}, ${first_name || null}, ${last_name || null}, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
           RETURNING id, email, first_name, last_name, created_at, updated_at
         `;
 
@@ -422,7 +406,6 @@ exports.handler = async (event, context) => {
             }),
           };
         }
-
 
         const systemPrompt = `You are an expert financial analyst and AI assistant specializing in stock and cryptocurrency analysis. 
 You have access to real-time market data and can provide comprehensive investment insights.

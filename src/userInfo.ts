@@ -26,9 +26,9 @@ export const useUserStore = defineStore("user", {
   getters: {
     fullName: (state) => {
       if (!state.user) return "";
-      const firstName = state.user.first_name || "";
-      const lastName = state.user.last_name || "";
-      const combinedName = `${firstName} ${lastName}`.trim();
+      const first_name = state.user.first_name || "";
+      const last_name = state.user.last_name || "";
+      const combinedName = `${first_name} ${last_name}`.trim();
       return combinedName || state.user.full_name || "";
     },
 
@@ -66,11 +66,16 @@ export const useUserStore = defineStore("user", {
     async register(userData: {
       email: string;
       password: string;
-      firstName: string;
-      lastName: string;
+      first_name: string;
+      last_name: string;
     }) {
       try {
-        const response = await authAPI.register(userData);
+        const response = await authAPI.register({
+          email: userData.email,
+          password: userData.password,
+          firstName: userData.first_name,
+          lastName: userData.last_name,
+        });
 
         this.token = response.access_token;
         this.refreshToken = response.refresh_token;
@@ -161,18 +166,18 @@ export const useUserStore = defineStore("user", {
       }
     },
 
-    async updateProfile(firstName: string, lastName: string) {
+    async updateProfile(first_name: string, last_name: string) {
       try {
         const response = await api.put("/user/profile", {
-          first_name: firstName,
-          last_name: lastName,
+          first_name: first_name,
+          last_name: last_name,
         });
         if (this.user) {
-          this.user.first_name = firstName;
-          this.user.last_name = lastName;
+          this.user.first_name = first_name;
+          this.user.last_name = last_name;
           localStorage.setItem("user", JSON.stringify(this.user));
         }
-        
+
         return response.data;
       } catch (error) {
         throw error;
