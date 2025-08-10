@@ -5,7 +5,7 @@
       <StaticNewsTicker />
     </div>
 
-    <div class="absolute top-10 sm:top-13 left-1/2 transform -translate-x-1/2">
+    <div class="absolute top-10 sm:top-13 lg:top-20 left-1/2 transform -translate-x-1/2">
       <h1 class="text-white text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center">STOXAI</h1>
     </div>
     
