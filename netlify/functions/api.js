@@ -432,7 +432,7 @@ Provide personalized, helpful financial analysis based on the user's question. I
               Authorization: `Bearer ${openaiApiKey}`,
             },
             body: JSON.stringify({
-              model: "gpt-3.5-turbo",
+              model: "gpt-5",
               messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: question },
