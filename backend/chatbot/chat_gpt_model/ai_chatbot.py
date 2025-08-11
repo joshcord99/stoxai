@@ -175,7 +175,7 @@ class AIChatbot:
             )
             client = openai.OpenAI(api_key=openai.api_key)
             response = client.chat.completions.create(
-                model="gpt-5",
+                model="gpt-4o",
                 messages=[{"role": "system", "content": prompt}, {"role": "user", "content": q}],
                 temperature=0.3
             )
@@ -245,7 +245,7 @@ class AIChatbot:
         try:
             client = openai.OpenAI(api_key=openai.api_key)
             res = client.chat.completions.create(
-                model="gpt-5",
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": sys_prompt},
                     {"role": "user", "content": user_input}
@@ -544,7 +544,7 @@ class AIChatbot:
             
             client = openai.OpenAI(api_key=openai.api_key)
             response = client.chat.completions.create(
-                model="gpt-5",
+                model="gpt-4o",
                 messages=[
                     {"role": "system", "content": prompt},
                     {"role": "user", "content": question}

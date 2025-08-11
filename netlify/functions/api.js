@@ -432,7 +432,7 @@ Provide personalized, helpful financial analysis based on the user's question. I
               Authorization: `Bearer ${openaiApiKey}`,
             },
             body: JSON.stringify({
-              model: "gpt-5",
+              model: "gpt-4o",
               messages: [
                 { role: "system", content: systemPrompt },
                 { role: "user", content: question },
