@@ -4,112 +4,49 @@ A comprehensive stock analysis platform that combines real-time market data, AI-
 
 ## Features
 
-- **Real-time Market Data**: Live stock prices and market indices
-- **AI Chatbot**: Intelligent stock analysis and market insights powered by OpenAI
-- **Portfolio Management**: Track and manage your investment portfolio
-- **Market Headlines**: Stay updated with latest financial news
-- **Stock Analysis**: Detailed technical and fundamental analysis
-- **User Authentication**: Secure login and registration system
-- **Responsive Design**: Modern UI that works on desktop and mobile
+- Real-time Market Data
+- AI Chatbot for stock analysis
+- Portfolio Management
+- Market Headlines
+- User Authentication
+- Responsive Design
+
+## Interface Screenshots
+
+### Dashboard Overview
+![Interface 1](assets/interface-1.png)
+
+### Stock Analysis & Chatbot
+![Interface 2](assets/interface-2.png)
 
 ## Tech Stack
 
+- **Frontend**: Vue.js 3, TypeScript, Tailwind CSS
+- **Backend**: Flask, SQLAlchemy, JWT
+- **AI**: OpenAI API
+- **Data**: yfinance, Pandas
+- **Deployment**: Netlify, Docker
+
+## Quick Start
+
 ### Frontend
-- **Vue.js 3** - Progressive JavaScript framework
-- **TypeScript** - Type-safe JavaScript
-- **Tailwind CSS** - Utility-first CSS framework
-- **Vite** - Fast build tool and dev server
-- **Chart.js** - Interactive charts and graphs
-- **Pinia** - State management
-
-### Backend
-- **Flask** - Python web framework
-- **SQLAlchemy** - Database ORM
-- **JWT** - Authentication
-- **OpenAI API** - AI chatbot functionality
-- **yfinance** - Stock data collection
-- **Pandas** - Data manipulation
-
-### Infrastructure
-- **Netlify** - Frontend hosting and serverless functions
-- **Docker** - Containerization
-- **PostgreSQL** - Database
-
-## Project Structure
-
-```
-stoxai/
-├── src/                    # Vue.js frontend
-│   ├── components/         # Vue components
-│   ├── pages/             # Page components
-│   ├── services/          # API services
-│   └── types/             # TypeScript definitions
-├── backend/               # Flask backend
-│   ├── app/               # Main application
-│   ├── chatbot/           # AI chatbot modules
-│   └── stock-data-collector/ # Stock data collection
-├── netlify/               # Netlify configuration
-└── assets/                # Static assets
-```
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js >= 20.0.0
-- Python >= 3.8
-- PostgreSQL database
-
-### Frontend Setup
-
-1. Install dependencies:
 ```bash
 npm install
-```
-
-2. Start development server:
-```bash
 npm run dev
 ```
 
-3. Build for production:
-```bash
-npm run build
-```
-
-### Backend Setup
-
-1. Navigate to backend directory:
+### Backend
 ```bash
 cd backend
-```
-
-2. Create virtual environment:
-```bash
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. Install dependencies:
-```bash
 pip install -r requirements.txt
-```
-
-4. Set up environment variables:
-```bash
-cp env.example .env
-# Edit .env with your configuration
-```
-
-5. Run the server:
-```bash
 python run_server.py
 ```
 
-### Environment Variables
+## Environment Setup
 
-Create a `.env` file in the backend directory:
-
+Create `.env` file in backend directory:
 ```env
 DATABASE_URL=postgresql://username:password@localhost:5432/stoxai
 JWT_SECRET_KEY=your-secret-key
@@ -117,64 +54,45 @@ OPENAI_API_KEY=your-openai-api-key
 CORS_ORIGINS=http://localhost:3000,http://localhost:5173
 ```
 
+## Testing Credentials
+
+Use these accounts for testing:
+
+**Account 1:**
+- Email: sunny@gmail.com
+- Password: SunnyApple123
+
+**Account 2:**
+- Email: willy@gmail.com
+- Password: WillyWonka123
+
 ## Usage
 
-1. **Registration/Login**: Create an account or sign in
-2. **Dashboard**: View live market data and portfolio overview
-3. **Chatbot**: Ask questions about stocks and get AI-powered analysis
-4. **Portfolio**: Add stocks to your portfolio and track performance
-5. **Market Data**: Explore real-time stock prices and market trends
+1. Register/Login with the provided credentials
+2. Explore the dashboard for live market data
+3. Use the AI chatbot for stock analysis
+4. Manage your portfolio
+5. Stay updated with market headlines
 
-## API Endpoints
+## Project Structure
 
-- `POST /api/auth/register` - User registration
-- `POST /api/auth/login` - User login
-- `POST /api/ai_chatbot` - AI chatbot requests
-- `POST /api/stock-analysis` - Stock analysis
-
-## Development
-
-### Available Scripts
-
-**Frontend:**
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm run lint` - Run ESLint
-- `npm run format` - Format code with Prettier
-
-**Backend:**
-- `python run_server.py` - Start Flask server
-- `pytest` - Run tests
-
-### Code Style
-
-- Frontend: ESLint + Prettier
-- Backend: Black + Flake8
+```
+stoxai/
+├── src/                    # Vue.js frontend
+├── backend/               # Flask backend
+├── netlify/               # Netlify configuration
+└── assets/                # Static assets
+```
 
 ## Deployment
 
-### Frontend (Netlify)
-1. Connect your repository to Netlify
-2. Build command: `npm run build`
-3. Publish directory: `dist`
-
-### Backend
-1. Use Docker for containerization
-2. Deploy to your preferred cloud platform
-3. Set up environment variables
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+- **Frontend**: Deploy to Netlify
+- **Backend**: Use Docker for containerization
 
 ## License
 
-This project is licensed under the MIT License.
+MIT License
 
-## Support
+---
 
-For support and questions, please open an issue in the repository.
+*Last updated: December 2024*
