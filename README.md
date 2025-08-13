@@ -13,10 +13,10 @@ A comprehensive stock analysis platform that combines real-time market data, AI-
 
 ## Interface Screenshots
 
-### Dashboard Overview
+### Landing Page
 ![Interface 1](assets/interface-1.png)
 
-### Stock Analysis & Chatbot
+### Dashboard - Stock Analysis & Chatbot
 ![Interface 2](assets/interface-2.png)
 
 ## Tech Stack
