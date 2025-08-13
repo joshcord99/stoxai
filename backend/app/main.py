@@ -33,10 +33,6 @@ def create_app(config_class=Config):
     with app.app_context():
         db.create_all()
     
-    @app.route('/api/health', methods=['GET'])
-    def health_check():
-        return {'status': 'healthy', 'message': 'Stock Analyst API is running'}
-    
     @app.route('/api/ai_chatbot', methods=['POST'])
     def ai_chatbot():
         """Handle AI chatbot requests with OpenAI"""

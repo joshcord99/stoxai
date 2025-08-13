@@ -93,21 +93,6 @@ def get_available_assets():
             'success': False
         }), 500
 
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        'status': 'healthy',
-        'message': 'Enhanced Stock Analysis API is running',
-        'features': [
-            'OpenAI-powered question interpretation',
-            'Contextual market analysis',
-            'Macroeconomic insights',
-            'Human-like investment advice',
-            'Conversation memory and context awareness'
-        ]
-    })
-
 @app.route('/api/fallback-analysis', methods=['POST'])
 def fallback_analysis():
     """Fallback to basic analysis if OpenAI fails"""

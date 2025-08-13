@@ -14,9 +14,7 @@
     "test": "python3 -m pytest",
     "lint": "flake8 .",
     "format": "black .",
-    "clean": "find . -name '__pycache__' -exec rm -rf {} + && find . -name '*.pyc' -delete && rm -rf venv",
-    "health": "curl http://localhost:5003/api/health",
-    "chatbot-health": "curl http://localhost:5002/api/health"
+    "clean": "find . -name '__pycache__' -exec rm -rf {} + && find . -name '*.pyc' -delete && rm -rf venv"
   },
   "dependencies": {
     "concurrently": "^8.2.2"

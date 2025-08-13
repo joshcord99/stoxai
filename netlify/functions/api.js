@@ -91,17 +91,6 @@ exports.handler = async (event, context) => {
       } catch (error) {}
     }
 
-    if (path === "/health" && method === "GET") {
-      return {
-        statusCode: 200,
-        headers,
-        body: JSON.stringify({
-          status: "healthy",
-          message: "Stock Analyst API is running",
-        }),
-      };
-    }
-
     if (path === "/auth/register" && method === "POST") {
       const { email, password, first_name, last_name } = body;
 
